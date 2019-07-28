@@ -7,6 +7,7 @@
       stripe
       tooltip-effect="dark"
       style="width: 100%"
+      :row-class-name="tableRowClassName"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
@@ -61,6 +62,14 @@ export default {
     }
   },
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex === 1) {
+        return "warning-row";
+      } else if (rowIndex === 3) {
+        return "success-row";
+      }
+      return "";
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     }
@@ -71,5 +80,12 @@ export default {
 
 <style lang="less" scoped>
 .record-table {
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
+  }
 }
 </style>

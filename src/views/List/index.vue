@@ -1,56 +1,7 @@
 <template>
   <div class="list-container">
-    <div class="tool-bar">
-      <el-button-group>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="导入"
-          placement="bottom"
-        >
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-upload2"
-          ></el-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="导出"
-          placement="bottom"
-        >
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-download"
-          ></el-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="任务"
-          placement="bottom"
-        >
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-s-order"
-          ></el-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="筛选"
-          placement="bottom"
-        >
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-set-up"
-          ></el-button>
-        </el-tooltip>
-      </el-button-group>
+    <div class="head-info">
+      <tool-bar></tool-bar>
       <div class="progress-wrap">
         <span>任务共1000例，完成进度</span>
         <div class="progress">
@@ -79,6 +30,7 @@
 </template>
 
 <script>
+import toolBar from "./components/toolBar";
 import recordTable from "./components/recordTable";
 export default {
   data() {
@@ -90,6 +42,7 @@ export default {
     };
   },
   components: {
+    toolBar,
     recordTable
   },
   methods: {
@@ -129,7 +82,7 @@ export default {
 
 <style lang="less" scoped>
 .list-container {
-  .tool-bar {
+  .head-info {
     padding: 10px 50px;
     height: 35px;
     display: flex;
