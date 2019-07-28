@@ -11,7 +11,15 @@ module.exports = {
   devServer: {
     port: 8080,
     host: "0.0.0.0",
-    disableHostCheck: true
+    disableHostCheck: true,
+    proxy: {
+      "/": {
+        target: "http://192.168.1.136",
+        changeOrigin: true,
+        autoRewrite: true,
+        cookieDomainRewrite: true
+      }
+    }
   },
   chainWebpack(config) {
     // alias
