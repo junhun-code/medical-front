@@ -135,7 +135,7 @@ export default {
   methods: {
     getFileRecordList() {
       let formVal = {};
-      this.$axios.post("/fileRecord/list", formVal).then(
+      this.$axios.post("/jspxcms/fileRecord/list", formVal).then(
         res => {
           if (res.data.success) {
             this.recordList = res.data.data;

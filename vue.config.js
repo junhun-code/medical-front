@@ -13,11 +13,10 @@ module.exports = {
     host: "0.0.0.0",
     disableHostCheck: true,
     proxy: {
-      "/": {
-        target: "http://192.168.1.136",
+      "/jspxcms": {
+        target: "http://60.191.84.4:8088/",
         changeOrigin: true,
-        autoRewrite: true,
-        cookieDomainRewrite: true
+        secure: false
       }
     }
   },
