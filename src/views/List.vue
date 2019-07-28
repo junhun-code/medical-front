@@ -12,8 +12,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: 'list',
   components: {
@@ -24,6 +22,7 @@ export default {
 <style lang="less" scoped>
   .list-container {
     .tool-bar {
+      height: 35px;
       display: flex;
       align-items: center;
       justify-content: space-between;
