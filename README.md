@@ -1,4 +1,4 @@
-# medical-font
+# medical-front
 
 ## Project setup
 ```
