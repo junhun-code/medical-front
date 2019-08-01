@@ -5,11 +5,7 @@
       <div class="progress-wrap">
         <span>任务共1000例，完成进度</span>
         <div class="progress">
-          <el-progress
-            :text-inside="true"
-            :stroke-width="22"
-            :percentage="80"
-          ></el-progress>
+          <el-progress :percentage="80"></el-progress>
         </div>
       </div>
     </div>
