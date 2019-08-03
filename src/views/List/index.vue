@@ -47,7 +47,7 @@ export default {
         current: this.currentPage,
         size: this.pageSize
       };
-      this.$axios.post("/fileRecord/list", formVal).then(
+      this.$axios.post("/jspxcms/fileRecord/list", formVal).then(
         res => {
           if (res.data.status === 0) {
             this.recordList = res.data.data.content;

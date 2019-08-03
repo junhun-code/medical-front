@@ -8,7 +8,12 @@
           icon="el-icon-edit"
           @click="drawType = 'pen'"
         ></el-button>
-        <el-button size="small" icon="el-icon-share"></el-button>
+        <el-button
+          :type="drawType === 'move' ? 'primary' : ''"
+          size="small"
+          icon="el-icon-share"
+          @click="drawType = 'move'"
+        ></el-button>
         <el-button
           :type="drawType === 'remove' ? 'primary' : ''"
           size="small"
@@ -31,7 +36,13 @@
         :preview-src-list="[url]"
         fit="contain"
       ></el-image>
-      <fabric :image-url="url" :draw-type="drawType"></fabric>
+      <fabric
+        :image-url="url"
+        :draw-type="drawType"
+        :file-record-id="fileRecordId"
+        :target-list-sketch="targetListSketch"
+        :sketch-groups="sketchGroups"
+      ></fabric>
     </div>
   </div>
 </template>
@@ -42,16 +53,60 @@ import tabList from "./components/tabList";
 export default {
   data() {
     return {
+      fileRecordId: undefined,
+      fileRecordDetail: {},
+      sketchGroups: [],
       url: "/201606301533460177SMP.JPG",
-      drawType: "pen"
+      drawType: "pen",
+      targetListSketch: []
     };
   },
   components: {
     fabric,
     tabList
   },
-  methods: {},
-  created() {}
+  methods: {
+    getFileRecord() {
+      let params = {
+        fileRecordId: this.fileRecordId
+      };
+      this.$axios
+        .get("/jspxcms/fileRecord/get", { params })
+        .then(res => {
+          if (res.data.status === 0) {
+            this.fileRecordDetail = res.data.data;
+            this.sketchGroups = this.fileRecordDetail.sketchGroups || [];
+            this.sketchGroups.forEach(groupItem => {
+              groupItem.sketchList.forEach(sketchItem => {
+                sketchItem.x = sketchItem.positionX;
+                sketchItem.y = sketchItem.positionY;
+              });
+            });
+          }
+        })
+        .catch(err => {});
+    },
+    getTargeList() {
+      let params = {
+        type: 2
+      };
+      this.$axios
+        .get("/jspxcms/target/list", { params })
+        .then(res => {
+          if (res.data.status === 0) {
+            this.targetListSketch = res.data.data;
+          } else {
+            this.$message(res.data.message);
+          }
+        })
+        .catch(err => {});
+    }
+  },
+  mounted() {
+    this.fileRecordId = this.$route.query.id;
+    this.getFileRecord();
+    this.getTargeList();
+  }
 };
 </script>
 

@@ -41,6 +41,13 @@
         label="训练版本"
         width="80"
       ></el-table-column>
+      <el-table-column label="操作" width="80">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="openSketchPage(scope.row)"
+            >勾画</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -72,6 +79,15 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    openSketchPage(item) {
+      const { href } = this.$router.resolve({
+        name: "sketch",
+        query: {
+          id: item.id
+        }
+      });
+      window.open(href, "_blank");
     }
   },
   created() {}
