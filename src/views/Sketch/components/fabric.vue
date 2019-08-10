@@ -137,18 +137,13 @@ export default {
         if (this.drawType === "pan") {
           var evt = opt.e;
           this.isDragging = true;
-          this.canvas.lastPosX = evt.clientX;
-          this.canvas.lastPosY = evt.clientY;
         }
       });
       this.canvas.on("mouse:move", opt => {
         if (this.drawType === "pan" && this.isDragging) {
           var e = opt.e;
-          this.canvas.viewportTransform[4] += e.clientX - this.canvas.lastPosX;
-          this.canvas.viewportTransform[5] += e.clientY - this.canvas.lastPosY;
-          this.canvas.lastPosX = e.clientX;
-          this.canvas.lastPosY = e.clientY;
-          this.canvas.requestRenderAll();
+          var delta = new fabric.Point(e.movementX, e.movementY);
+          this.canvas.relativePan(delta);
         }
       });
       this.canvas.on("mouse:up", opt => {
