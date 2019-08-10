@@ -31,24 +31,24 @@ export default {
       canvas: null,
       drawWidth: 2, //笔触宽度
       color: "#E34F51", //画笔颜色
-      doDrawing: true // 绘制状态
+      isDragging: false // 是否正在拖动
     };
   },
   watch: {
     drawType: {
       handler: function(newVal, oldVal) {
-        this.canvas.isDrawingMode = false;
-        this.doDrawing = false;
         if (newVal === "pen") {
           this.canvas.isDrawingMode = true;
-          this.doDrawing = true;
+          this.canvas.selection = false;
+          this.canvas.skipTargetFind = true;
         } else if (newVal === "remove") {
+          this.canvas.isDrawingMode = false;
           this.canvas.selection = true;
           this.canvas.skipTargetFind = false;
-          this.canvas.selectable = true;
-        } else {
-          this.canvas.skipTargetFind = true; //画板元素不能被选中
-          this.canvas.selection = false; //画板不显示选中
+        } else if (newVal === "panning") {
+          this.canvas.isDrawingMode = false;
+          this.canvas.selection = false;
+          this.canvas.skipTargetFind = true;
         }
       }
     },
@@ -61,7 +61,7 @@ export default {
       //初始化画板
       this.canvas = new fabric.Canvas("canvas", {
         isDrawingMode: true,
-        skipTargetFind: true,
+        skipTargetFind: true, // 画板元素不能被选中
         selectable: false,
         selection: false,
         preserveObjectStacking: true,
@@ -74,6 +74,8 @@ export default {
 
       this.freeDrawing();
       this.removeSelected();
+      this.zoomControl();
+      this.panningControl();
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
@@ -103,7 +105,7 @@ export default {
     freeDrawing() {
       this.canvas.on("path:created", options => {
         console.log("[points]", this.canvas.freeDrawingBrush._points);
-        console.log("[freeDrawing]", this.canvas.toObject());
+        // console.log("[freeDrawing]", this.canvas.toObject());
       });
     },
     // 选中删除
@@ -113,6 +115,46 @@ export default {
         console.log("[removeSelected]", e);
         this.canvas.remove(e.target);
         this.canvas.discardActiveObject(); //清楚选中框
+      });
+    },
+    // 缩放
+    zoomControl() {
+      this.canvas.on("mouse:wheel", opt => {
+        var delta = opt.e.deltaY;
+        var pointer = this.canvas.getPointer(opt.e);
+        var zoom = this.canvas.getZoom();
+        zoom = zoom + delta / 200;
+        if (zoom > 20) zoom = 20;
+        if (zoom < 0.01) zoom = 0.01;
+        this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+      });
+    },
+    // 平移
+    panningControl() {
+      this.canvas.on("mouse:down", opt => {
+        if (this.drawType === "panning") {
+          var evt = opt.e;
+          this.isDragging = true;
+          this.canvas.lastPosX = evt.clientX;
+          this.canvas.lastPosY = evt.clientY;
+        }
+      });
+      this.canvas.on("mouse:move", opt => {
+        if (this.drawType === "panning" && this.isDragging) {
+          var e = opt.e;
+          this.canvas.viewportTransform[4] += e.clientX - this.canvas.lastPosX;
+          this.canvas.viewportTransform[5] += e.clientY - this.canvas.lastPosY;
+          this.canvas.lastPosX = e.clientX;
+          this.canvas.lastPosY = e.clientY;
+          this.canvas.requestRenderAll();
+        }
+      });
+      this.canvas.on("mouse:up", opt => {
+        if (this.drawType === "panning") {
+          this.isDragging = false;
+        }
       });
     }
   },

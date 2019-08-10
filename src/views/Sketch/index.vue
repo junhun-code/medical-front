@@ -9,10 +9,10 @@
           @click="drawType = 'pen'"
         ></el-button>
         <el-button
-          :type="drawType === 'move' ? 'primary' : ''"
+          :type="drawType === 'panning' ? 'primary' : ''"
           size="small"
-          icon="el-icon-share"
-          @click="drawType = 'move'"
+          icon="el-icon-rank"
+          @click="drawType = 'panning'"
         ></el-button>
         <el-button
           :type="drawType === 'remove' ? 'primary' : ''"
