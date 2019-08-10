@@ -45,7 +45,7 @@ export default {
           this.canvas.isDrawingMode = false;
           this.canvas.selection = true;
           this.canvas.skipTargetFind = false;
-        } else if (newVal === "panning") {
+        } else if (newVal === "pan") {
           this.canvas.isDrawingMode = false;
           this.canvas.selection = false;
           this.canvas.skipTargetFind = true;
@@ -68,18 +68,18 @@ export default {
         fireRightClick: true
       });
       this.initImage();
-      this.initPolygon();
       this.canvas.freeDrawingBrush.color = this.color;
       this.canvas.freeDrawingBrush.width = this.drawWidth;
 
       this.freeDrawing();
       this.removeSelected();
       this.zoomControl();
-      this.panningControl();
+      this.panControl();
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
         this.canvas.add(oImg);
+        this.initPolygon();
       });
     },
     initPolygon() {
@@ -132,9 +132,9 @@ export default {
       });
     },
     // 平移
-    panningControl() {
+    panControl() {
       this.canvas.on("mouse:down", opt => {
-        if (this.drawType === "panning") {
+        if (this.drawType === "pan") {
           var evt = opt.e;
           this.isDragging = true;
           this.canvas.lastPosX = evt.clientX;
@@ -142,7 +142,7 @@ export default {
         }
       });
       this.canvas.on("mouse:move", opt => {
-        if (this.drawType === "panning" && this.isDragging) {
+        if (this.drawType === "pan" && this.isDragging) {
           var e = opt.e;
           this.canvas.viewportTransform[4] += e.clientX - this.canvas.lastPosX;
           this.canvas.viewportTransform[5] += e.clientY - this.canvas.lastPosY;
@@ -152,7 +152,7 @@ export default {
         }
       });
       this.canvas.on("mouse:up", opt => {
-        if (this.drawType === "panning") {
+        if (this.drawType === "pan") {
           this.isDragging = false;
         }
       });
