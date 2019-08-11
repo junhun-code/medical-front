@@ -112,7 +112,8 @@ export default {
     removeSelected() {
       this.canvas.on("selection:created", e => {
         if (this.drawType !== "remove") return;
-        console.log("[removeSelected]", e);
+        if (e.target._element && e.target._element.className === "canvas-img")
+          return;
         this.canvas.remove(e.target);
         this.canvas.discardActiveObject(); //清楚选中框
       });
