@@ -84,7 +84,8 @@ export default {
       const { href } = this.$router.resolve({
         name: "sketch",
         query: {
-          id: item.id
+          fileRecordId: item.id,
+          fileUuid: item.fileUuid
         }
       });
       window.open(href, "_blank");

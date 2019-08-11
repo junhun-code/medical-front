@@ -32,15 +32,16 @@
       <el-image
         class="image-wrap"
         style="width: 400px; height: 300px"
-        :src="url"
-        :preview-src-list="[url]"
+        :src="imageUrl"
+        :preview-src-list="[imageUrl]"
         fit="contain"
       ></el-image>
       <fabric
-        :image-url="url"
+        :image-url="imageUrl"
         :draw-type="drawType"
         :file-record-id="fileRecordId"
-        :target-list-sketch="targetListSketch"
+        :file-target-list="fileTargetList"
+        :sketch-target-list="sketchTargetList"
         :sketch-groups="sketchGroups"
       ></fabric>
     </div>
@@ -54,11 +55,13 @@ export default {
   data() {
     return {
       fileRecordId: undefined,
+      fileUuid: undefined,
       fileRecordDetail: {},
-      sketchGroups: [],
-      url: "/201606301533460177SMP.JPG",
+      sketchGroups: [], // 勾画的集合
+      imageUrl: "",
       drawType: "pen",
-      targetListSketch: []
+      fileTargetList: [],
+      sketchTargetList: []
     };
   },
   components: {
@@ -77,16 +80,41 @@ export default {
             this.fileRecordDetail = res.data.data;
             this.sketchGroups = this.fileRecordDetail.sketchGroups || [];
             this.sketchGroups.forEach(groupItem => {
-              groupItem.sketchList.forEach(sketchItem => {
-                sketchItem.x = sketchItem.positionX;
-                sketchItem.y = sketchItem.positionY;
+              groupItem.sketchList = groupItem.sketchList.map(sketchItem => {
+                return {
+                  x: sketchItem.positionX,
+                  y: sketchItem.positionY
+                };
               });
             });
+            this.fileRecordDownload();
           }
         })
         .catch(err => {});
     },
-    getTargeList() {
+    fileRecordDownload() {
+      this.imageUrl = `/jspxcms/fileRecord/download?fileRecordId=${
+        this.fileRecordId
+      }&uuid=${this.fileUuid}`;
+    },
+    // 影像标签
+    getFileTargeList(type) {
+      let params = {
+        type: 1
+      };
+      this.$axios
+        .get("/jspxcms/target/list", { params })
+        .then(res => {
+          if (res.data.status === 0) {
+            this.fileTargetList = res.data.data;
+          } else {
+            this.$message(res.data.message);
+          }
+        })
+        .catch(err => {});
+    },
+    // 勾画标签
+    getSketchTargeList(type) {
       let params = {
         type: 2
       };
@@ -94,7 +122,7 @@ export default {
         .get("/jspxcms/target/list", { params })
         .then(res => {
           if (res.data.status === 0) {
-            this.targetListSketch = res.data.data;
+            this.sketchTargetList = res.data.data;
           } else {
             this.$message(res.data.message);
           }
@@ -103,9 +131,11 @@ export default {
     }
   },
   mounted() {
-    this.fileRecordId = this.$route.query.id;
+    this.fileRecordId = this.$route.query.fileRecordId;
+    this.fileUuid = this.$route.query.fileUuid;
     this.getFileRecord();
-    this.getTargeList();
+    this.getFileTargeList();
+    this.getSketchTargeList();
   }
 };
 </script>

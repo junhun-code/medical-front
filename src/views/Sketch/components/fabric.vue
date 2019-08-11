@@ -5,7 +5,7 @@
     </canvas>
     <div class="tag-tool">
       <el-button
-        v-for="(item, index) in targetListSketch"
+        v-for="(item, index) in fileTargetList"
         :key="index"
         size="small"
         >{{ item.name }}</el-button
@@ -22,7 +22,8 @@ export default {
     "imageUrl",
     "drawType",
     "fileRecordId",
-    "targetListSketch",
+    "fileTargetList",
+    "sketchTargetList",
     "sketchGroups"
   ],
   components: {},
@@ -41,19 +42,25 @@ export default {
           this.canvas.isDrawingMode = true;
           this.canvas.selection = false;
           this.canvas.skipTargetFind = true;
-        } else if (newVal === "remove") {
-          this.canvas.isDrawingMode = false;
-          this.canvas.selection = true;
-          this.canvas.skipTargetFind = false;
         } else if (newVal === "pan") {
           this.canvas.isDrawingMode = false;
           this.canvas.selection = false;
           this.canvas.skipTargetFind = true;
+        } else if (newVal === "remove") {
+          this.canvas.isDrawingMode = false;
+          this.canvas.selection = false;
+          this.canvas.skipTargetFind = false;
+          this.canvas.selectable = true;
         }
       }
     },
     sketchGroups: {
       handler: function(newVal, oldVal) {}
+    },
+    imageUrl: {
+      handler: function(newVal, oldVal) {
+        this.initCanvas();
+      }
     }
   },
   methods: {
@@ -78,34 +85,35 @@ export default {
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
+        // oImg.lockMovementX = true;
+        // oImg.lockMovementY = true;
         this.canvas.add(oImg);
         this.initPolygon();
       });
     },
     initPolygon() {
-      let polygon = new fabric.Polygon(
-        [
-          { x: 1, y: 1 },
-          { x: 2, y: 1 },
-          { x: 3, y: 1 },
-          { x: 4, y: 1 },
-          { x: 5, y: 1 }
-        ],
-        {
-          left: 50,
-          top: 50,
+      this.sketchGroups.forEach(groupItem => {
+        console.log(groupItem);
+        let polygon = new fabric.Polygon(groupItem.sketchList, {
           strokeWidth: 2,
           stroke: "red",
           objectCaching: false
-        }
-      );
-      this.canvas.add(polygon);
+        });
+        this.canvas.add(polygon);
+      });
     },
     // 自由绘画
     freeDrawing() {
       this.canvas.on("path:created", options => {
         console.log("[points]", this.canvas.freeDrawingBrush._points);
-        // console.log("[freeDrawing]", this.canvas.toObject());
+        let points = this.canvas.freeDrawingBrush._points;
+        points = points.map(item => {
+          return {
+            positionX: parseInt(item.x),
+            positionY: parseInt(item.y)
+          };
+        });
+        this.sketchSave(points);
       });
     },
     // 选中删除
@@ -125,8 +133,8 @@ export default {
         var pointer = this.canvas.getPointer(opt.e);
         var zoom = this.canvas.getZoom();
         zoom = zoom + delta / 200;
-        if (zoom > 20) zoom = 20;
-        if (zoom < 0.01) zoom = 0.01;
+        if (zoom > 10) zoom = 10;
+        if (zoom < 0.1) zoom = 0.1;
         this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
         opt.e.preventDefault();
         opt.e.stopPropagation();
@@ -152,11 +160,45 @@ export default {
           this.isDragging = false;
         }
       });
+    },
+    // 勾画保存
+    sketchSave(points) {
+      let formVal = {
+        fileRecordId: this.fileRecordId,
+        sketchList: points,
+        targetId: ""
+      };
+      this.$axios.post("/jspxcms/sketch/save", formVal).then(
+        res => {
+          if (res.data.status !== 0) {
+            this.$message.error("保存失败");
+          }
+        },
+        err => {
+          this.$message.error("保存失败");
+        }
+      );
+    },
+    // 勾画删除
+    sketchDelete() {
+      let formVal = {
+        sketchGroupId: this.fileRecordId
+      };
+      this.$axios.post("/jspxcms/sketch/delete", formVal).then(
+        res => {
+          if (res.data.status !== 0) {
+            this.$message.error("删除失败");
+          }
+        },
+        err => {
+          this.$message.error("删除失败");
+        }
+      );
     }
   },
   created() {},
   mounted() {
-    this.initCanvas();
+    // this.initCanvas();
   }
 };
 </script>
