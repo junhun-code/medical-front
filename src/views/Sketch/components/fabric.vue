@@ -1,15 +1,25 @@
 <template>
   <div class="sketch">
-    <canvas id="canvas" width="400" height="300">
+    <canvas id="canvas" width="600" height="500">
       你的浏览器不支持canvas
     </canvas>
     <div class="tag-tool">
-      <el-button
-        v-for="(item, index) in fileTargetList"
-        :key="index"
-        size="small"
-        >{{ item.name }}</el-button
-      >
+      <div class="file-target">
+        <el-button
+          v-for="(item, index) in fileTargetList"
+          :key="index"
+          size="small"
+          >{{ item.name }}</el-button
+        >
+      </div>
+      <div class="sketch-target">
+        <el-button
+          v-for="(item, index) in sketchTargetList"
+          :key="index"
+          size="small"
+          >{{ item.name }}</el-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -85,27 +95,31 @@ export default {
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
-        // oImg.lockMovementX = true;
-        // oImg.lockMovementY = true;
+        oImg.selectable = false; // 在单个元素上设置 selectable为false，这样设置的单个元素是无法选择和拖动了。
         this.canvas.add(oImg);
         this.initPolygon();
       });
     },
     initPolygon() {
       this.sketchGroups.forEach(groupItem => {
-        console.log(groupItem);
         let polygon = new fabric.Polygon(groupItem.sketchList, {
           strokeWidth: 2,
           stroke: "red",
-          objectCaching: false
+          objectCaching: false,
+          fill: "transparent"
         });
+        polygon.fileRecordId = groupItem.fileRecordId;
+        polygon.sketchGroupId = groupItem.id;
+        polygon.siteId = groupItem.siteId;
+        polygon.targetId = groupItem.targetId;
+        polygon.targetName = groupItem.targetName;
         this.canvas.add(polygon);
       });
     },
     // 自由绘画
     freeDrawing() {
       this.canvas.on("path:created", options => {
-        console.log("[points]", this.canvas.freeDrawingBrush._points);
+        console.log("[points]", this.canvas.freeDrawingBrush._points, options);
         let points = this.canvas.freeDrawingBrush._points;
         points = points.map(item => {
           return {
@@ -113,7 +127,7 @@ export default {
             positionY: parseInt(item.y)
           };
         });
-        this.sketchSave(points);
+        this.sketchSave(points, options);
       });
     },
     // 选中删除
@@ -122,8 +136,10 @@ export default {
         if (this.drawType !== "remove") return;
         if (e.target._element && e.target._element.className === "canvas-img")
           return;
-        this.canvas.remove(e.target);
-        this.canvas.discardActiveObject(); //清楚选中框
+        console.log(e.target);
+        this.sketchDelete(e.target);
+        // this.canvas.remove(e.target);
+        // this.canvas.discardActiveObject(); // 清除选中框
       });
     },
     // 缩放
@@ -162,7 +178,7 @@ export default {
       });
     },
     // 勾画保存
-    sketchSave(points) {
+    sketchSave(points, eventTarget) {
       let formVal = {
         fileRecordId: this.fileRecordId,
         sketchList: points,
@@ -170,7 +186,11 @@ export default {
       };
       this.$axios.post("/jspxcms/sketch/save", formVal).then(
         res => {
-          if (res.data.status !== 0) {
+          if (res.data.status === 0) {
+            let objects = this.canvas.getObjects();
+            let lastObject = this.canvas.item(objects.length - 1);
+            lastObject.sketchGroupId = res.data.data;
+          } else {
             this.$message.error("保存失败");
           }
         },
@@ -180,13 +200,16 @@ export default {
       );
     },
     // 勾画删除
-    sketchDelete() {
-      let formVal = {
-        sketchGroupId: this.fileRecordId
+    sketchDelete(eventTarget) {
+      let params = {
+        sketchGroupId: eventTarget.sketchGroupId
       };
-      this.$axios.post("/jspxcms/sketch/delete", formVal).then(
+      this.$axios.get("/jspxcms/sketch/delete", { params }).then(
         res => {
-          if (res.data.status !== 0) {
+          if (res.data.status === 0) {
+            this.canvas.remove(eventTarget);
+            this.canvas.discardActiveObject(); // 清除选中框
+          } else {
             this.$message.error("删除失败");
           }
         },
@@ -197,9 +220,7 @@ export default {
     }
   },
   created() {},
-  mounted() {
-    // this.initCanvas();
-  }
+  mounted() {}
 };
 </script>
 
@@ -213,8 +234,14 @@ export default {
   .tag-tool {
     display: flex;
     flex-direction: column;
-    & > button {
-      margin: 0 !important;
+    justify-content: space-between;
+    .file-target,
+    .sketch-target {
+      display: flex;
+      flex-direction: column;
+      & > button {
+        margin: 0 !important;
+      }
     }
   }
 }
