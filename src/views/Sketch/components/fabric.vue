@@ -21,6 +21,19 @@
         >
       </div>
     </div>
+    <el-dialog
+      title="标签选择"
+      width="200px"
+      :visible.sync="sketchTargetVisible"
+    >
+      <el-button
+        v-for="(item, index) in sketchTargetList"
+        :key="index"
+        type="primary"
+        @click="selectSketchTarget(item)"
+        >{{ item.name }}</el-button
+      >
+    </el-dialog>
   </div>
 </template>
 
@@ -42,7 +55,8 @@ export default {
       canvas: null,
       drawWidth: 2, //笔触宽度
       color: "#E34F51", //画笔颜色
-      isDragging: false // 是否正在拖动
+      isDragging: false, // 是否正在拖动
+      sketchTargetVisible: false
     };
   },
   watch: {
@@ -127,7 +141,9 @@ export default {
             positionY: parseInt(item.y)
           };
         });
-        this.sketchSave(points, options);
+        this.sketchTargetVisible = true;
+        this.currentPoints = points;
+        // this.sketchSave(points, options);
       });
     },
     // 选中删除
@@ -177,15 +193,19 @@ export default {
         }
       });
     },
+    selectSketchTarget(target) {
+      this.sketchSave(target.id);
+    },
     // 勾画保存
-    sketchSave(points, eventTarget) {
+    sketchSave(targetId) {
       let formVal = {
         fileRecordId: this.fileRecordId,
-        sketchList: points,
-        targetId: ""
+        sketchList: this.currentPoints,
+        targetId: targetId
       };
       this.$axios.post("/jspxcms/sketch/save", formVal).then(
         res => {
+          this.sketchTargetVisible = false;
           if (res.data.status === 0) {
             let objects = this.canvas.getObjects();
             let lastObject = this.canvas.item(objects.length - 1);
@@ -243,6 +263,13 @@ export default {
         margin: 0 !important;
       }
     }
+  }
+}
+/deep/.el-dialog__body {
+  display: flex;
+  flex-direction: column;
+  & > button {
+    margin: 5px 0 !important;
   }
 }
 </style>
