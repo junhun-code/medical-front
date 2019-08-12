@@ -21,17 +21,24 @@
           @click="drawType = 'remove'"
         ></el-button>
       </el-button-group>
-      <el-button-group>
-        <el-button>确认</el-button>
-        <el-button>驳回</el-button>
-        <el-button>审核</el-button>
-      </el-button-group>
+      <div class="head-right">
+        <el-popover placement="right" width="240" trigger="click">
+          <tab-list class="tab-list-wrap"></tab-list>
+          <el-button slot="reference" style="margin-right: 10px;"
+            >选择对象</el-button
+          >
+        </el-popover>
+        <el-button-group>
+          <el-button>确认</el-button>
+          <el-button>驳回</el-button>
+          <el-button>审核</el-button>
+        </el-button-group>
+      </div>
     </div>
     <div class="fabric-wrap">
-      <tab-list class="tab-list-wrap"></tab-list>
       <el-image
         class="image-wrap"
-        style="width: 400px; height: 300px"
+        style="width: 600px; height: 500px"
         :src="imageUrl"
         :preview-src-list="[imageUrl]"
         fit="contain"
@@ -43,7 +50,17 @@
         :file-target-list="fileTargetList"
         :sketch-target-list="sketchTargetList"
         :sketch-groups="sketchGroups"
+        :targe-id="targeId"
+        @selectFileTarget="setFileRecordTarget"
       ></fabric>
+    </div>
+    <div class="pagination-control">
+      <el-button-group>
+        <el-button type="primary" icon="el-icon-arrow-left">上一页</el-button>
+        <el-button type="primary"
+          >下一页<i class="el-icon-arrow-right el-icon--right"></i
+        ></el-button>
+      </el-button-group>
     </div>
   </div>
 </template>
@@ -61,7 +78,8 @@ export default {
       imageUrl: "",
       drawType: "pen",
       fileTargetList: [],
-      sketchTargetList: []
+      sketchTargetList: [],
+      targeId: null
     };
   },
   components: {
@@ -69,6 +87,7 @@ export default {
     tabList
   },
   methods: {
+    // 图片详情
     getFileRecord() {
       let params = {
         fileRecordId: this.fileRecordId
@@ -78,6 +97,7 @@ export default {
         .then(res => {
           if (res.data.status === 0) {
             this.fileRecordDetail = res.data.data;
+            this.targeId = this.fileRecordDetail.targeId;
             this.sketchGroups = this.fileRecordDetail.sketchGroups || [];
             this.sketchGroups.forEach(groupItem => {
               groupItem.sketchList = groupItem.sketchList.map(sketchItem => {
@@ -92,12 +112,31 @@ export default {
         })
         .catch(err => {});
     },
+    // 影像打标签
+    setFileRecordTarget(id) {
+      let params = {
+        fileRecordId: this.fileRecordId,
+        targetId: id
+      };
+      this.$axios
+        .get("/jspxcms/fileRecord/targeted", { params })
+        .then(res => {
+          if (res.data.status === 0) {
+            this.targeId = id;
+            console.log(111, this.targeId);
+          } else {
+            this.$message(res.data.message);
+          }
+        })
+        .catch(err => {});
+    },
+    // 影像下载
     fileRecordDownload() {
       this.imageUrl = `/jspxcms/fileRecord/download?fileRecordId=${
         this.fileRecordId
       }&uuid=${this.fileUuid}`;
     },
-    // 影像标签
+    // 标签列表
     getFileTargeList(type) {
       let params = {
         type: 1
@@ -148,16 +187,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    .head-right {
+      display: flex;
+      align-items: center;
+    }
   }
   .fabric-wrap {
     padding: 10px 50px;
     display: flex;
+    justify-content: center;
     .tab-list-wrap {
       margin-right: 5px;
     }
     .image-wrap {
       margin-right: 5px;
     }
+  }
+  .pagination-control {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

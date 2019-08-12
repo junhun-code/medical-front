@@ -9,6 +9,8 @@
           v-for="(item, index) in fileTargetList"
           :key="index"
           size="small"
+          :type="targeId === item.id ? 'primary' : ''"
+          @click="selectFileTarget(item)"
           >{{ item.name }}</el-button
         >
       </div>
@@ -47,7 +49,8 @@ export default {
     "fileRecordId",
     "fileTargetList",
     "sketchTargetList",
-    "sketchGroups"
+    "sketchGroups",
+    "targeId"
   ],
   components: {},
   data() {
@@ -237,6 +240,10 @@ export default {
           this.$message.error("删除失败");
         }
       );
+    },
+    selectFileTarget(item) {
+      if (item.id === this.targeId) return;
+      this.$emit("selectFileTarget", item.id);
     }
   },
   created() {},
