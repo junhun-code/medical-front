@@ -146,7 +146,6 @@ export default {
         });
         this.sketchTargetVisible = true;
         this.currentPoints = points;
-        // this.sketchSave(points, options);
       });
     },
     // 选中删除
@@ -155,10 +154,7 @@ export default {
         if (this.drawType !== "remove") return;
         if (e.target._element && e.target._element.className === "canvas-img")
           return;
-        console.log(e.target);
         this.sketchDelete(e.target);
-        // this.canvas.remove(e.target);
-        // this.canvas.discardActiveObject(); // 清除选中框
       });
     },
     // 缩放
@@ -213,12 +209,13 @@ export default {
             let objects = this.canvas.getObjects();
             let lastObject = this.canvas.item(objects.length - 1);
             lastObject.sketchGroupId = res.data.data;
+            this.$message("勾画保存成功");
           } else {
-            this.$message.error("保存失败");
+            this.$message.error("勾画保存失败");
           }
         },
         err => {
-          this.$message.error("保存失败");
+          this.$message.error("勾画保存失败");
         }
       );
     },
@@ -232,6 +229,7 @@ export default {
           if (res.data.status === 0) {
             this.canvas.remove(eventTarget);
             this.canvas.discardActiveObject(); // 清除选中框
+            this.$message("删除成功");
           } else {
             this.$message.error("删除失败");
           }

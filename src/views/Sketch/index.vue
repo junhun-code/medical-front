@@ -24,7 +24,7 @@
       <div class="head-right">
         <el-popover placement="right" width="240" trigger="click">
           <tab-list class="tab-list-wrap"></tab-list>
-          <el-button slot="reference" style="margin-right: 10px;"
+          <el-button type="info" slot="reference" style="margin-right: 10px;"
             >选择对象</el-button
           >
         </el-popover>
@@ -123,7 +123,7 @@ export default {
         .then(res => {
           if (res.data.status === 0) {
             this.targeId = id;
-            console.log(111, this.targeId);
+            this.$message("影像打标签成功");
           } else {
             this.$message(res.data.message);
           }
@@ -136,8 +136,8 @@ export default {
         this.fileRecordId
       }&uuid=${this.fileUuid}`;
     },
-    // 标签列表
-    getFileTargeList(type) {
+    // 影像标签列表
+    getFileTargeList() {
       let params = {
         type: 1
       };
@@ -152,8 +152,8 @@ export default {
         })
         .catch(err => {});
     },
-    // 勾画标签
-    getSketchTargeList(type) {
+    // 勾画标签列表
+    getSketchTargeList() {
       let params = {
         type: 2
       };
