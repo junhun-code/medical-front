@@ -5,8 +5,10 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import _axios from "./services/request";
+import tools from "./lib/tools.js";
 
 Vue.prototype.$axios = _axios;
+Vue.prototype.$tools = tools;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 

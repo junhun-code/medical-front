@@ -47,17 +47,19 @@ export default {
         current: this.currentPage,
         size: this.pageSize
       };
-      this.$axios.post("/jspxcms/fileRecord/list", formVal).then(
-        res => {
-          if (res.data.status === 0) {
-            this.recordList = res.data.data.content;
-            this.total = res.data.data.totalElements;
+      this.$axios
+        .post("/jspxcms/cmscp/datamanage/fileRecord/list", formVal)
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.recordList = res.data.data.content;
+              this.total = res.data.data.totalElements;
+            }
+          },
+          err => {
+            console.log(err);
           }
-        },
-        err => {
-          console.log(err);
-        }
-      );
+        );
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

@@ -1,58 +1,125 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-   v4.0 | 20180602
-   License: none (public domain)
-*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-main, menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	vertical-align: baseline;
-	font-family: 'Helvetica Neue',Tahoma,Arial,PingFangSC-Regular,'Hiragino Sans GB','Microsoft Yahei',sans-serif;
-	font-weight: 400;
+body,
+div,
+span,
+header,
+footer,
+nav,
+section,
+aside,
+article,
+ul,
+dl,
+dt,
+dd,
+li,
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+i,
+b,
+textarea,
+button,
+input,
+select,
+figure,
+figcaption {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-style: normal;
+  text-decoration: none;
+  border: none;
+  font-family: "Microsoft Yahei", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  &:focus {
+    outline: none;
+  }
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, main, menu, nav, section {
-	display: block;
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background-color: #f5f5f5;
 }
-/* HTML5 hidden-attribute fix for newer browsers */
-*[hidden] {
-    display: none;
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+  border-radius: 10px;
+  background-color: #f5f5f5;
 }
-html,body{
-	//-webkit-overflow-scrolling: touch; 这是大坑已弃用   只要body高度不是固定的  随着内容增加的  ios就能滚动顺滑
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
 }
+
+input[type="button"],
+input[type="submit"],
+input[type="search"],
+input[type="reset"] {
+  -webkit-appearance: none;
+}
+
+textarea {
+  -webkit-appearance: none;
+}
+
+html,
 body {
-	line-height: 1;
+  height: 100%;
+  width: 100%;
 }
-button{
-	outline: none;
+
+// 清除浮动
+.clearfix {
+  &::after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
 }
-ol, ul {
-	list-style: none;
+
+/*单行文本溢出*/
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-blockquote, q {
-	quotes: none;
+
+/*2行文本溢出*/
+.ellipsis2 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+
+/*3行文本溢出*/
+.ellipsis3 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
 }
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
+
+// 按钮点击效果
+button.btn-hover {
+  outline: none;
+  transition: all 0.1s, opacity 0.2s;
+}
+
+button.btn-hover:active {
+  transform: scale(0.95);
 }
