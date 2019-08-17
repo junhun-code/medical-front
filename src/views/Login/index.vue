@@ -82,16 +82,16 @@ export default {
   width: 100%;
   height: 100%;
   background: linear-gradient(to right, #003973 0, #e5e5be 100%);
+  box-sizing: border-box;
   .form_contianer {
     width: 350px;
-    height: auto;
     position: absolute;
-    left: 0;
-    right: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     padding: 30px 25px 10px;
     border-radius: 5px;
     background-color: #fff;
-    margin: 260px auto 0;
     .project-title {
       position: absolute;
       width: 100%;

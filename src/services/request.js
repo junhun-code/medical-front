@@ -1,6 +1,7 @@
 "use strict";
 
 import axios from "axios";
+import router from "../router";
 import { Notification } from "element-ui";
 
 axios.defaults.timeout = 10000;
@@ -19,10 +20,15 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   response => {
+    console.log(response);
     if (response && response.status === 200) {
       // 未登录
-      if (response.data.code === 401) {
-        // auth
+      if (response.data.status === 401 || response.data.status === "401") {
+        Notification.error({
+          title: "错误：401",
+          message: "未登录"
+        });
+        router.push("/login");
       }
       return Promise.resolve(response);
     } else {
