@@ -5,9 +5,9 @@ const client = require("scp2");
 client.scp(
   "./dist/",
   {
-    host: "106.13.95.188",
+    host: "106.13.171.51",
     username: "root",
-    password: "xupeng@163",
+    password: "hangzhou@163",
     path: "/home/admin/apps/medical-front/"
   },
   function(err) {
