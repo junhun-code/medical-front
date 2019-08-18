@@ -3,6 +3,7 @@
     <el-button-group>
       <el-tooltip class="item" effect="dark" content="导入" placement="bottom">
         <el-button
+          v-if="uploadRight"
           type="primary"
           size="small"
           icon="el-icon-upload2"
@@ -11,6 +12,7 @@
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="导出" placement="bottom">
         <el-button
+          v-if="downloadRight"
           type="primary"
           size="small"
           icon="el-icon-download"
@@ -51,12 +53,6 @@
             </div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="导入分类">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="手术良恶性">
-          <el-input></el-input>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showUploadModal = false">取 消</el-button>
@@ -70,6 +66,7 @@
 
 <script>
 import dayjs from "dayjs";
+import { mapState } from "vuex";
 export default {
   name: "tool-bar",
   props: [],
@@ -79,6 +76,28 @@ export default {
       showUploadModal: false
     };
   },
+  computed: {
+    ...mapState(["listPerms"]),
+    uploadRight() {
+      return this.listPerms.children.some(
+        item => item.perm === "fileRecord:zip_upload"
+      );
+    },
+    downloadRight() {
+      return this.listPerms.children.some(
+        item => item.perm === "fileRecord:exportData"
+      );
+    }
+  },
+  watch: {
+    showUploadModal: {
+      handler: function(newVal, oldVal) {
+        if (!newVal) {
+          console.log("showUploadModal");
+        }
+      }
+    }
+  },
   components: {},
   methods: {
     handleFileRemove(file, fileList) {
@@ -86,17 +105,17 @@ export default {
     },
     handleFileSuccess(res, file) {
       console.log("[file]", res, file);
-      this.$message({
-        message: "上传文件成功",
-        type: "success"
-      });
+      if (res.status === 0) {
+        this.$message.success("上传文件成功");
+      } else {
+        this.$message.error(`上传文件失败:${res.message}`);
+      }
     },
     handleFileError(err, file, fileList) {
       console.log(err);
       this.$message.error("上传文件失败");
     }
-  },
-  created() {}
+  }
 };
 </script>
 

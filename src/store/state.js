@@ -2,8 +2,12 @@
 
 const state = {
   userInfo: null,
-  listPerms: {},
-  sketchPerms: {}
+  listPerms: {
+    children: []
+  },
+  sketchPerms: {
+    children: []
+  }
 };
 
 export default state;

@@ -202,7 +202,7 @@ export default {
         sketchList: this.currentPoints,
         targetId: targetId
       };
-      this.$axios.post("/jspxcms/sketch/save", formVal).then(
+      this.$axios.post("/jspxcms/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
           if (res.data.status === 0) {
@@ -224,20 +224,22 @@ export default {
       let params = {
         sketchGroupId: eventTarget.sketchGroupId
       };
-      this.$axios.get("/jspxcms/sketch/delete", { params }).then(
-        res => {
-          if (res.data.status === 0) {
-            this.canvas.remove(eventTarget);
-            this.canvas.discardActiveObject(); // 清除选中框
-            this.$message("删除成功");
-          } else {
+      this.$axios
+        .get("/jspxcms/cmscp/datamanage/sketch/delete", { params })
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.canvas.remove(eventTarget);
+              this.canvas.discardActiveObject(); // 清除选中框
+              this.$message("删除成功");
+            } else {
+              this.$message.error("删除失败");
+            }
+          },
+          err => {
             this.$message.error("删除失败");
           }
-        },
-        err => {
-          this.$message.error("删除失败");
-        }
-      );
+        );
     },
     selectFileTarget(item) {
       if (item.id === this.targeId) return;

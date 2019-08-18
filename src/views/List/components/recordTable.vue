@@ -10,7 +10,7 @@
       :row-class-name="tableRowClassName"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="selection" width="45" fixed></el-table-column>
       <el-table-column prop="id" label="序号" width="60"></el-table-column>
       <el-table-column prop="name" label="状态" width="120"></el-table-column>
       <el-table-column prop="importName" label="入库人员"></el-table-column>
@@ -41,7 +41,7 @@
         label="训练版本"
         width="80"
       ></el-table-column>
-      <el-table-column label="操作" width="80">
+      <el-table-column label="操作" width="80" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" @click="openSketchPage(scope.row)"
             >勾画</el-button

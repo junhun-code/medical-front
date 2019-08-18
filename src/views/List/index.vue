@@ -15,7 +15,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 40]"
+        :page-sizes="[10, 20, 50, 100, 500, 1000, 2000]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -28,7 +28,6 @@
 <script>
 import toolBar from "./components/toolBar";
 import recordTable from "./components/recordTable";
-import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -37,9 +36,6 @@ export default {
       pageSize: 10,
       total: 0
     };
-  },
-  computed: {
-    ...mapState(["listPerms"])
   },
   components: {
     toolBar,

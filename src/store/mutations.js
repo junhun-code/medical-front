@@ -7,7 +7,6 @@ const mutations = {
     state.userInfo = userInfo;
   },
   [types.SET_DATA_MANAGE_PERMS](state, perms) {
-    console.log(perms);
     perms.forEach(item => {
       if (item.perm === "back_dataManage") {
         state.listPerms = item;

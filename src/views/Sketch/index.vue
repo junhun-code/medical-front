@@ -30,8 +30,8 @@
         </el-popover>
         <el-button-group>
           <el-button>确认</el-button>
-          <el-button>驳回</el-button>
-          <el-button>审核</el-button>
+          <el-button v-if="rejectRight">驳回</el-button>
+          <el-button v-if="auditRight">审核</el-button>
         </el-button-group>
       </div>
     </div>
@@ -84,13 +84,43 @@ export default {
     };
   },
   computed: {
-    ...mapState(["sketchPerms"])
+    ...mapState(["sketchPerms"]),
+    sketchSettingRight() {
+      return this.sketchPerms.children.some(
+        item => item.perm === "fileRecord:sketchSetting"
+      );
+    },
+    auditRight() {
+      return this.sketchPerms.children.some(
+        item => item.perm === "fileRecord:audit"
+      );
+    },
+    rejectRight() {
+      return this.sketchPerms.children.some(
+        item => item.perm === "fileRecord:reject"
+      );
+    }
   },
   components: {
     fabric,
     tabList
   },
   methods: {
+    // 数据列表、勾画权限查询
+    getPerms() {
+      this.$axios.get("/jspxcms/dataManage/perms").then(
+        res => {
+          if (res.data.status === 0) {
+            this.$store.commit("SET_DATA_MANAGE_PERMS", res.data.data);
+          } else {
+            this.$message.error("权限查询失败");
+          }
+        },
+        err => {
+          this.$message.error("权限查询失败");
+        }
+      );
+    },
     // 图片详情
     getFileRecord() {
       let params = {
@@ -127,7 +157,7 @@ export default {
         .then(res => {
           if (res.data.status === 0) {
             this.targeId = id;
-            this.$message("影像打标签成功");
+            this.$message.success("影像打标签成功");
           } else {
             this.$message(res.data.message);
           }
@@ -136,7 +166,7 @@ export default {
     },
     // 影像下载
     fileRecordDownload() {
-      this.imageUrl = `/jspxcms/fileRecord/download?fileRecordId=${
+      this.imageUrl = `/jspxcms/cmscp/datamanage/fileRecord/download?fileRecordId=${
         this.fileRecordId
       }&uuid=${this.fileUuid}`;
     },
@@ -146,7 +176,7 @@ export default {
         type: 1
       };
       this.$axios
-        .get("/jspxcms/target/list", { params })
+        .get("/jspxcms/cmscp/datamanage/target/list", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileTargetList = res.data.data;
@@ -162,7 +192,7 @@ export default {
         type: 2
       };
       this.$axios
-        .get("/jspxcms/target/list", { params })
+        .get("/jspxcms/cmscp/datamanage/target/list", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.sketchTargetList = res.data.data;
@@ -176,6 +206,7 @@ export default {
   mounted() {
     this.fileRecordId = this.$route.query.fileRecordId;
     this.fileUuid = this.$route.query.fileUuid;
+    this.getPerms();
     this.getFileRecord();
     this.getFileTargeList();
     this.getSketchTargeList();
