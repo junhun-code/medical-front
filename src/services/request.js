@@ -20,7 +20,7 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   response => {
-    console.log(response);
+    console.warn(response.config.url, "=>", response.data);
     if (response && response.status === 200) {
       // 未登录
       if (response.data.status === 401 || response.data.status === "401") {
@@ -28,7 +28,7 @@ axios.interceptors.response.use(
           title: "错误：401",
           message: "未登录"
         });
-        router.push("/login");
+        router.push("/");
       }
       return Promise.resolve(response);
     } else {
@@ -39,7 +39,7 @@ axios.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          window.location.href = "/login";
+          window.location.href = "/";
           break;
         case 403:
           Notification.error({

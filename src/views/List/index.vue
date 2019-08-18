@@ -28,6 +28,7 @@
 <script>
 import toolBar from "./components/toolBar";
 import recordTable from "./components/recordTable";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -37,11 +38,29 @@ export default {
       total: 0
     };
   },
+  computed: {
+    ...mapState(["listPerms"])
+  },
   components: {
     toolBar,
     recordTable
   },
   methods: {
+    // 数据列表、勾画权限查询
+    getPerms() {
+      this.$axios.get("/jspxcms/dataManage/perms").then(
+        res => {
+          if (res.data.status === 0) {
+            this.$store.commit("SET_DATA_MANAGE_PERMS", res.data.data);
+          } else {
+            this.$message.error("权限查询失败");
+          }
+        },
+        err => {
+          this.$message.error("权限查询失败");
+        }
+      );
+    },
     getFileRecordList() {
       let formVal = {
         current: this.currentPage,
@@ -73,6 +92,7 @@ export default {
     }
   },
   created() {
+    this.getPerms();
     this.getFileRecordList();
   }
 };

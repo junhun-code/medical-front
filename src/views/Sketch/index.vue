@@ -68,6 +68,7 @@
 <script>
 import fabric from "./components/fabric";
 import tabList from "./components/tabList";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -81,6 +82,9 @@ export default {
       sketchTargetList: [],
       targeId: null
     };
+  },
+  computed: {
+    ...mapState(["sketchPerms"])
   },
   components: {
     fabric,
