@@ -217,7 +217,7 @@ export default {
 <style lang="less" scoped>
 .sketch-container {
   .head-info {
-    padding: 10px 50px;
+    padding: 10px 20px;
     height: 35px;
     display: flex;
     align-items: center;
@@ -228,7 +228,7 @@ export default {
     }
   }
   .fabric-wrap {
-    padding: 10px 50px;
+    padding: 10px 20px;
     display: flex;
     justify-content: center;
     .tab-list-wrap {

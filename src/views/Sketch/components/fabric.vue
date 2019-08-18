@@ -59,7 +59,10 @@ export default {
       drawWidth: 2, //笔触宽度
       color: "#E34F51", //画笔颜色
       isDragging: false, // 是否正在拖动
-      sketchTargetVisible: false
+      sketchTargetVisible: false,
+
+      imageWidth: 0,
+      imageHight: 0
     };
   },
   watch: {
@@ -112,9 +115,12 @@ export default {
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
+        this.imageWidth = oImg.width;
+        this.imageHight = oImg.height;
         oImg.selectable = false; // 在单个元素上设置 selectable为false，这样设置的单个元素是无法选择和拖动了。
         this.canvas.add(oImg);
         this.initPolygon();
+        this.zoomToFitCanvas();
       });
     },
     initPolygon() {
@@ -132,6 +138,14 @@ export default {
         polygon.targetName = groupItem.targetName;
         this.canvas.add(polygon);
       });
+    },
+    // 内容自动缩放并居中 http://www.hangge.com/blog/cache/detail_1861.html
+    zoomToFitCanvas() {
+      //计算平移坐标
+      let panX = (this.imageWidth - this.canvas.width) / 2;
+      let panY = (this.imageHight - this.canvas.height) / 2;
+      //开始平移
+      this.canvas.absolutePan({ x: panX, y: panY });
     },
     // 自由绘画
     freeDrawing() {
