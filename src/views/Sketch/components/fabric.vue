@@ -146,6 +146,20 @@ export default {
       let panY = (this.imageHight - this.canvas.height) / 2;
       //开始平移
       this.canvas.absolutePan({ x: panX, y: panY });
+
+      //计算缩放比例
+      var zoom = Math.min(
+        this.canvas.width / this.imageWidth,
+        this.canvas.height / this.imageHight
+      );
+
+      //计算缩放中心
+      var zoomPoint = new fabric.Point(
+        this.canvas.width / 2,
+        this.canvas.height / 2
+      );
+      //开始缩放
+      this.canvas.zoomToPoint(zoomPoint, zoom);
     },
     // 自由绘画
     freeDrawing() {
