@@ -73,7 +73,7 @@ export default {
       let fileRecordIdList = this.selectedRecords.map(item => item.id);
 
       let formVal = {
-        fileRecordIdList: fileRecordIdList.join(","),
+        fileRecordIdList: fileRecordIdList,
         userId: selectedUser.id || undefined,
         userName: selectedUser.realName || undefined,
         operate: this.form.type === "sktech" ? 1 : 2

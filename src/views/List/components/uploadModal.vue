@@ -5,8 +5,8 @@
         <el-upload
           class="upload-demo"
           ref="upload"
-          action="/jspxcms/fileRecord/zip_upload"
-          :on-remove="handleFileRemove"
+          action="/jspxcms/cmscp/datamanage/fileRecord/zip_upload"
+          :before-upload="beforeUploadPackage"
           :on-success="handleFileSuccess"
           :on-error="handleFileError"
         >
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import uploadMethods from "@/lib/upload.js";
+
 export default {
   name: "upload-modal",
   props: [],
@@ -35,8 +37,13 @@ export default {
     closeUploadModal() {
       this.$emit("updateUploadModal", false);
     },
-    handleFileRemove(file, fileList) {
-      console.log(file, fileList);
+    beforeUploadPackage(file) {
+      if (uploadMethods.getFileType(file.name) === "package") {
+        return true;
+      } else {
+        this.$message.error("文件格式错误");
+        return false;
+      }
     },
     handleFileSuccess(res, file) {
       console.log("[file]", res, file);
