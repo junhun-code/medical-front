@@ -23,19 +23,29 @@
       </el-button-group>
       <div class="head-right">
         <el-button-group>
-          <el-button v-if="mode === 'sketch'">确认</el-button>
-          <el-button v-if="rejectRight && mode === 'audit'">驳回</el-button>
-          <el-button v-if="auditRight && mode === 'audit'">审核</el-button>
+          <el-button v-if="mode === 'sketch'" @click="setSketchState"
+            >确认</el-button
+          >
+          <el-button
+            v-if="rejectRight && mode === 'audit'"
+            @click="setAuditState(2)"
+            >驳回</el-button
+          >
+          <el-button
+            v-if="auditRight && mode === 'audit'"
+            @click="setAuditState(1)"
+            >审核</el-button
+          >
         </el-button-group>
       </div>
     </div>
     <div class="fabric-wrap">
-      <tab-list
+      <task-list
         class="tab-list-wrap"
         :mode="mode"
         @updateMode="updateMode"
         @updateCurrentFileRecord="updateCurrentFileRecord"
-      ></tab-list>
+      ></task-list>
       <el-image
         class="image-wrap"
         style="width: 600px; height: 500px"
@@ -46,7 +56,7 @@
       <fabric
         :image-url="imageUrl"
         :draw-type="drawType"
-        :file-record-id="currentFileRecord.fileRecord.id"
+        :file-record-id="currentFileRecord.id"
         :file-target-list="fileTargetList"
         :sketch-target-list="sketchTargetList"
         :sketch-groups="sketchGroups"
@@ -56,7 +66,7 @@
     </div>
     <div class="pagination-control">
       <el-button-group>
-        <el-button type="primary"
+        <el-button type="primary" @click="goToNextPagination"
           >下一页<i class="el-icon-arrow-right el-icon--right"></i
         ></el-button>
       </el-button-group>
@@ -66,17 +76,15 @@
 
 <script>
 import fabric from "./components/fabric";
-import tabList from "./components/tabList";
+import taskList from "./components/taskList";
 import { mapState } from "vuex";
 export default {
   data() {
     return {
       mode: "sketch", // sketch, audit
       currentFileRecord: {
-        fileRecord: {
-          id: "",
-          fileUuid: ""
-        }
+        id: "",
+        fileUuid: ""
       },
       fileRecordDetail: {},
       sketchGroups: [], // 勾画的集合
@@ -107,7 +115,7 @@ export default {
   },
   components: {
     fabric,
-    tabList
+    taskList
   },
   methods: {
     updateMode(mode) {
@@ -120,14 +128,16 @@ export default {
     // 图片详情
     getFileRecord() {
       let params = {
-        fileRecordId: this.currentFileRecord.fileRecord.id
+        fileRecordId: this.currentFileRecord.id
       };
       this.$axios
         .get("/jspxcms/cmscp/datamanage/fileRecord/get", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileRecordDetail = res.data.data;
-            this.targeId = this.fileRecordDetail.targeId;
+            if (this.fileRecordDetail.targeId) {
+              this.targeId = this.fileRecordDetail.targeId;
+            }
             this.sketchGroups = this.fileRecordDetail.sketchGroups || [];
             this.sketchGroups.forEach(groupItem => {
               groupItem.sketchList = groupItem.sketchList.map(sketchItem => {
@@ -145,7 +155,7 @@ export default {
     // 影像打标签
     setFileRecordTarget(id) {
       let params = {
-        fileRecordId: this.currentFileRecord.fileRecord.id,
+        fileRecordId: this.currentFileRecord.id,
         targetId: id
       };
       this.$axios
@@ -163,8 +173,8 @@ export default {
     // 影像下载
     fileRecordDownload() {
       this.imageUrl = `/jspxcms/cmscp/datamanage/fileRecord/download?fileRecordId=${
-        this.currentFileRecord.fileRecord.id
-      }&uuid=${this.currentFileRecord.fileRecord.fileUuid}`;
+        this.currentFileRecord.id
+      }&uuid=${this.currentFileRecord.fileUuid}`;
     },
     // 影像标签列表
     getFileTargeList() {
@@ -197,6 +207,69 @@ export default {
           }
         })
         .catch(err => {});
+    },
+    // 下一条处理
+    goToNextPagination() {},
+    // 勾画状态设置
+    setSketchState() {
+      let formVal = {
+        fileRecordId: this.currentFileRecord.id
+      };
+      this.$axios
+        .post("/jspxcms/cmscp/datamanage/fileRecord/sketched", formVal)
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.$message("勾画状态设置成功");
+              this.nextTask();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("勾画状态设置失败");
+          }
+        );
+    },
+    // 审核状态设置
+    setAuditState(audit) {
+      let formVal = {
+        fileRecordId: this.currentFileRecord.id,
+        audit: audit
+      };
+      this.$axios
+        .post("/jspxcms/cmscp/datamanage/fileRecord/audited", formVal)
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.$message("审核状态设置成功");
+              this.nextTask();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("审核状态设置失败");
+          }
+        );
+    },
+    // 我的任务下一条
+    nextTask() {
+      let formVal = {
+        operate: this.mode === "sketch" ? 1 : 2
+      };
+      this.$axios.post("/jspxcms/cmscp/datamanage/myTask/next", formVal).then(
+        res => {
+          if (res.data.status === 0) {
+            console.log("下一张");
+          } else {
+            this.$message.error(res.data.message);
+          }
+        },
+        err => {
+          this.$message.error("跳转下一页失败");
+        }
+      );
     }
   },
   mounted() {

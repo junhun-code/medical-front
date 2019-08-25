@@ -3,6 +3,7 @@
     <canvas id="canvas" width="600" height="500">
       你的浏览器不支持canvas
     </canvas>
+    <!-- 影像标签 -->
     <div class="tag-tool">
       <div class="file-target">
         <el-button
@@ -14,6 +15,7 @@
           >{{ item.name }}</el-button
         >
       </div>
+      <!-- mask标签 -->
       <div class="sketch-target">
         <el-button
           v-for="(item, index) in sketchTargetList"
@@ -171,7 +173,6 @@ export default {
         this.canvas.height / 2
       );
       //开始缩放
-      console.log({ x: panX, y: panY }, zoom);
       this.canvas.zoomToPoint(zoomPoint, zoom);
     },
     // 自由绘画

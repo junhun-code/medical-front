@@ -1,10 +1,10 @@
 <template>
-  <div class="tab-list" v-loading="loading">
+  <div class="task-list" v-loading="loading">
     <el-tabs stretch v-model="mode">
       <el-tab-pane label="勾画" name="sketch"></el-tab-pane>
       <el-tab-pane label="审核" name="audit"></el-tab-pane>
     </el-tabs>
-    <div class="task-list">
+    <div class="data-list">
       <div
         class="task-item"
         :class="{ 'task-selected': currentFileRecord.id === item.id }"
@@ -12,7 +12,7 @@
         :key="index"
         @click="selectCurrentFileRecord(item)"
       >
-        {{ item.fileRecord.fileName }}
+        {{ item.fileName }}
       </div>
     </div>
     <div class="task-pagination">
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "tab-list",
+  name: "task-list",
   props: [],
   data() {
     return {
@@ -50,7 +50,6 @@ export default {
   watch: {
     mode: {
       handler(newVal) {
-        console.log(newVal);
         this.$emit("updateMode", newVal);
         this.currentPage = 1;
         this.getMyTask();
@@ -74,8 +73,13 @@ export default {
         res => {
           this.loading = false;
           if (res.data.status === 0) {
-            this.taskList = res.data.data.content;
+            this.taskList = res.data.data.content.map(item => item.fileRecord);
             this.total = res.data.data.totalPages;
+            if (this.firstFlag && this.taskList.length) {
+              // 第一次默认加载第一个数据
+              this.selectCurrentFileRecord(this.taskList[0]);
+              this.firstFlag = false;
+            }
           } else {
             this.$message(res.data.message);
           }
@@ -98,12 +102,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tab-list {
+.task-list {
   flex-shrink: 0;
   width: 180px;
   display: flex;
   flex-direction: column;
-  .task-list {
+  .data-list {
     flex: 1;
     .task-item {
       height: 30px;
