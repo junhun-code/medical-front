@@ -19,6 +19,11 @@ export default new Router({
       path: "/sketch",
       name: "sketch",
       component: () => import("./views/Sketch")
+    },
+    {
+      path: "/version",
+      name: "version",
+      component: () => import("./views/Version")
     }
   ]
 });

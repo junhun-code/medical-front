@@ -20,9 +20,11 @@
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="任务" placement="bottom">
         <el-button
+          v-if="assignmentRight"
           type="primary"
           size="small"
           icon="el-icon-s-order"
+          @click="showTaskModal = true"
         ></el-button>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="筛选" placement="bottom">
@@ -30,50 +32,44 @@
           type="primary"
           size="small"
           icon="el-icon-set-up"
+          @click="showScreenModal = true"
         ></el-button>
       </el-tooltip>
     </el-button-group>
 
-    <el-dialog title="导入" :visible.sync="showUploadModal">
-      <el-form ref="form" label-width="100px">
-        <el-form-item label="上传文件">
-          <el-upload
-            class="upload-demo"
-            ref="upload"
-            action="/jspxcms/fileRecord/zip_upload"
-            :on-remove="handleFileRemove"
-            :on-success="handleFileSuccess"
-            :on-error="handleFileError"
-          >
-            <el-button slot="trigger" size="small" type="primary"
-              >选取文件</el-button
-            >
-            <div slot="tip" class="el-upload__tip">
-              只能上传压缩文件
-            </div>
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="showUploadModal = false">取 消</el-button>
-        <el-button type="primary" @click="showUploadModal = false"
-          >确 定</el-button
-        >
-      </div>
+    <el-dialog width="500px" title="导入" :visible.sync="showUploadModal">
+      <upload-modal @updateUploadModal="updateUploadModal"></upload-modal>
+    </el-dialog>
+
+    <el-dialog width="500px" title="任务分配" :visible.sync="showTaskModal">
+      <task-modal @updateTaskModal="updateTaskModal"></task-modal>
+    </el-dialog>
+
+    <el-dialog width="500px" title="筛选" :visible.sync="showScreenModal">
+      <screen-modal @updateScreenModal="updateScreenModal"></screen-modal>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import uploadModal from "./uploadModal";
+import taskModal from "./taskModal";
+import screenModal from "./screenModal";
 import dayjs from "dayjs";
 import { mapState } from "vuex";
 export default {
   name: "tool-bar",
   props: [],
+  components: {
+    uploadModal,
+    taskModal,
+    screenModal
+  },
   data() {
     return {
-      showScreeningModal: false,
-      showUploadModal: false
+      showUploadModal: false,
+      showTaskModal: false,
+      showScreenModal: false
     };
   },
   computed: {
@@ -87,34 +83,38 @@ export default {
       return this.listPerms.children.some(
         item => item.perm === "fileRecord:exportData"
       );
+    },
+    assignmentRight() {
+      return this.listPerms.children.some(
+        item => item.perm === "fileRecord:assignment"
+      );
     }
   },
-  watch: {
-    showUploadModal: {
-      handler: function(newVal, oldVal) {
-        if (!newVal) {
-          console.log("showUploadModal");
-        }
-      }
-    }
-  },
-  components: {},
   methods: {
-    handleFileRemove(file, fileList) {
-      console.log(file, fileList);
+    updateUploadModal(value) {
+      this.showUploadModal = value;
     },
-    handleFileSuccess(res, file) {
-      console.log("[file]", res, file);
-      if (res.status === 0) {
-        this.$message.success("上传文件成功");
-      } else {
-        this.$message.error(`上传文件失败:${res.message}`);
-      }
+    updateTaskModal(value) {
+      this.showTaskModal = value;
     },
-    handleFileError(err, file, fileList) {
-      console.log(err);
-      this.$message.error("上传文件失败");
+    updateScreenModal(value) {
+      this.showTaskModal = value;
+    },
+    getUserList() {
+      this.$axios
+        .get("/fileRecord/role/userlist")
+        .then(res => {
+          if (res.data.status === 0) {
+            this.$message.success("影像打标签成功");
+          } else {
+            this.$message(res.data.message);
+          }
+        })
+        .catch(err => {});
     }
+  },
+  mounted() {
+    this.getUserList();
   }
 };
 </script>

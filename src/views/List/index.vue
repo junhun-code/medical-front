@@ -42,39 +42,22 @@ export default {
     recordTable
   },
   methods: {
-    // 数据列表、勾画权限查询
-    getPerms() {
-      this.$axios.get("/jspxcms/dataManage/perms").then(
-        res => {
-          if (res.data.status === 0) {
-            this.$store.commit("SET_DATA_MANAGE_PERMS", res.data.data);
-          } else {
-            this.$message.error("权限查询失败");
-          }
-        },
-        err => {
-          this.$message.error("权限查询失败");
-        }
-      );
-    },
     getFileRecordList() {
       let formVal = {
         current: this.currentPage,
         size: this.pageSize
       };
-      this.$axios
-        .post("/jspxcms/cmscp/datamanage/fileRecord/list", formVal)
-        .then(
-          res => {
-            if (res.data.status === 0) {
-              this.recordList = res.data.data.content;
-              this.total = res.data.data.totalElements;
-            }
-          },
-          err => {
-            console.log(err);
+      this.$axios.post("/jspxcms/fileRecord/list", formVal).then(
+        res => {
+          if (res.data.status === 0) {
+            this.recordList = res.data.data.content;
+            this.total = res.data.data.totalElements;
           }
-        );
+        },
+        err => {
+          console.log(err);
+        }
+      );
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -88,7 +71,6 @@ export default {
     }
   },
   created() {
-    this.getPerms();
     this.getFileRecordList();
   }
 };

@@ -106,21 +106,6 @@ export default {
     tabList
   },
   methods: {
-    // 数据列表、勾画权限查询
-    getPerms() {
-      this.$axios.get("/jspxcms/dataManage/perms").then(
-        res => {
-          if (res.data.status === 0) {
-            this.$store.commit("SET_DATA_MANAGE_PERMS", res.data.data);
-          } else {
-            this.$message.error("权限查询失败");
-          }
-        },
-        err => {
-          this.$message.error("权限查询失败");
-        }
-      );
-    },
     // 图片详情
     getFileRecord() {
       let params = {
@@ -153,7 +138,7 @@ export default {
         targetId: id
       };
       this.$axios
-        .get("/jspxcms/fileRecord/targeted", { params })
+        .get("/fileRecord/targeted", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.targeId = id;
@@ -206,7 +191,6 @@ export default {
   mounted() {
     this.fileRecordId = this.$route.query.fileRecordId;
     this.fileUuid = this.$route.query.fileUuid;
-    this.getPerms();
     this.getFileRecord();
     this.getFileTargeList();
     this.getSketchTargeList();
