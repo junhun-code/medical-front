@@ -24,7 +24,7 @@
           type="primary"
           size="small"
           icon="el-icon-s-order"
-          @click="showTaskModal = true"
+          @click="openTaskModal"
         ></el-button>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="筛选" placement="bottom">
@@ -42,7 +42,12 @@
     </el-dialog>
 
     <el-dialog width="500px" title="任务分配" :visible.sync="showTaskModal">
-      <task-modal @updateTaskModal="updateTaskModal"></task-modal>
+      <task-modal
+        @updateTaskModal="updateTaskModal"
+        :auditUserList="auditUserList"
+        :sketchUserList="sketchUserList"
+        :selectedRecords="selectedRecords"
+      ></task-modal>
     </el-dialog>
 
     <el-dialog width="500px" title="筛选" :visible.sync="showScreenModal">
@@ -69,11 +74,14 @@ export default {
     return {
       showUploadModal: false,
       showTaskModal: false,
-      showScreenModal: false
+      showScreenModal: false,
+      auditUserList: [],
+      sketchUserList: [],
+      users: []
     };
   },
   computed: {
-    ...mapState(["listPerms"]),
+    ...mapState(["listPerms", "selectedRecords"]),
     uploadRight() {
       return this.listPerms.children.some(
         item => item.perm === "fileRecord:zip_upload"
@@ -100,12 +108,34 @@ export default {
     updateScreenModal(value) {
       this.showTaskModal = value;
     },
+    openTaskModal() {
+      if (this.selectedRecords.length === 0) {
+        this.$message.info("未选择数据");
+      } else {
+        this.showTaskModal = true;
+      }
+    },
+    // 勾画、审核人员列表
     getUserList() {
       this.$axios
-        .get("/fileRecord/role/userlist")
+        .get("/jspxcms/cmscp/datamanage/role/userlist")
         .then(res => {
           if (res.data.status === 0) {
-            this.$message.success("影像打标签成功");
+            this.auditUserList = res.data.data.auditUserList || [];
+            this.sketchUserList = res.data.data.sketchUserList || [];
+          } else {
+            this.$message(res.data.message);
+          }
+        })
+        .catch(err => {});
+    },
+    // 用户下拉框模糊查询
+    getUsers() {
+      this.$axios
+        .get("/jspxcms/cmscp/datamanage/fileRecord/users")
+        .then(res => {
+          if (res.data.status === 0) {
+            this.users = res.data.data.auditUserList || [];
           } else {
             this.$message(res.data.message);
           }

@@ -112,7 +112,7 @@ export default {
         fileRecordId: this.fileRecordId
       };
       this.$axios
-        .get("/jspxcms/fileRecord/get", { params })
+        .get("/jspxcms/cmscp/datamanage/fileRecord/get", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileRecordDetail = res.data.data;
@@ -138,7 +138,7 @@ export default {
         targetId: id
       };
       this.$axios
-        .get("/fileRecord/targeted", { params })
+        .get("/jspxcms/cmscp/datamanage/fileRecord/targeted", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.targeId = id;

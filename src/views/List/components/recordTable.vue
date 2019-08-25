@@ -67,7 +67,11 @@ export default {
   components: {},
   filters: {
     dateFormat(value) {
-      return dayjs(value).format("YYYY-MM-DD");
+      if (value) {
+        return dayjs(value).format("YYYY-MM-DD");
+      } else {
+        return "";
+      }
     }
   },
   methods: {
@@ -81,6 +85,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      this.$store.commit("SET_SELECTED_RECORDS", this.multipleSelection);
     },
     openSketchPage(item) {
       const { href } = this.$router.resolve({

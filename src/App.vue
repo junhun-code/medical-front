@@ -11,7 +11,7 @@ export default {
   methods: {
     // 数据列表、勾画权限查询
     getPerms() {
-      this.$axios.get("/cmscp/datamanage/dataManage/perms").then(
+      this.$axios.get("/jspxcms/cmscp/datamanage/dataManage/perms").then(
         res => {
           if (res.data.status === 0) {
             this.$store.commit("SET_DATA_MANAGE_PERMS", res.data.data);

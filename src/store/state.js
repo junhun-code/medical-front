@@ -7,7 +7,8 @@ const state = {
   },
   sketchPerms: {
     children: []
-  }
+  },
+  selectedRecords: []
 };
 
 export default state;

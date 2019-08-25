@@ -14,6 +14,9 @@ const mutations = {
         state.sketchPerms = item;
       }
     });
+  },
+  [types.SET_SELECTED_RECORDS](state, records) {
+    state.selectedRecords = records;
   }
 };
 
