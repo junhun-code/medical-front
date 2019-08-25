@@ -89,7 +89,12 @@ export default {
     },
     imageUrl: {
       handler: function(newVal, oldVal) {
-        this.initCanvas();
+        if (this.canvas) {
+          this.canvas.clear();
+          this.updateCanvas();
+        } else {
+          this.initCanvas();
+        }
       }
     }
   },
@@ -112,6 +117,9 @@ export default {
       this.removeSelected();
       this.zoomControl();
       this.panControl();
+    },
+    updateCanvas() {
+      this.initImage();
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
@@ -141,6 +149,10 @@ export default {
     },
     // 内容自动缩放并居中 http://www.hangge.com/blog/cache/detail_1861.html
     zoomToFitCanvas() {
+      //先还原缩放比例与位置
+      this.canvas.setZoom(1);
+      this.canvas.absolutePan({ x: 0, y: 0 });
+
       //计算平移坐标
       let panX = (this.imageWidth - this.canvas.width) / 2;
       let panY = (this.imageHight - this.canvas.height) / 2;
@@ -159,6 +171,7 @@ export default {
         this.canvas.height / 2
       );
       //开始缩放
+      console.log({ x: panX, y: panY }, zoom);
       this.canvas.zoomToPoint(zoomPoint, zoom);
     },
     // 自由绘画

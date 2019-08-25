@@ -22,20 +22,20 @@
         ></el-button>
       </el-button-group>
       <div class="head-right">
-        <el-popover placement="right" width="240" trigger="click">
-          <tab-list class="tab-list-wrap"></tab-list>
-          <el-button type="info" slot="reference" style="margin-right: 10px;"
-            >选择对象</el-button
-          >
-        </el-popover>
         <el-button-group>
-          <el-button>确认</el-button>
-          <el-button v-if="rejectRight">驳回</el-button>
-          <el-button v-if="auditRight">审核</el-button>
+          <el-button v-if="mode === 'sketch'">确认</el-button>
+          <el-button v-if="rejectRight && mode === 'audit'">驳回</el-button>
+          <el-button v-if="auditRight && mode === 'audit'">审核</el-button>
         </el-button-group>
       </div>
     </div>
     <div class="fabric-wrap">
+      <tab-list
+        class="tab-list-wrap"
+        :mode="mode"
+        @updateMode="updateMode"
+        @updateCurrentFileRecord="updateCurrentFileRecord"
+      ></tab-list>
       <el-image
         class="image-wrap"
         style="width: 600px; height: 500px"
@@ -46,7 +46,7 @@
       <fabric
         :image-url="imageUrl"
         :draw-type="drawType"
-        :file-record-id="fileRecordId"
+        :file-record-id="currentFileRecord.fileRecord.id"
         :file-target-list="fileTargetList"
         :sketch-target-list="sketchTargetList"
         :sketch-groups="sketchGroups"
@@ -56,7 +56,6 @@
     </div>
     <div class="pagination-control">
       <el-button-group>
-        <el-button type="primary" icon="el-icon-arrow-left">上一页</el-button>
         <el-button type="primary"
           >下一页<i class="el-icon-arrow-right el-icon--right"></i
         ></el-button>
@@ -72,8 +71,13 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      fileRecordId: undefined,
-      fileUuid: undefined,
+      mode: "sketch", // sketch, audit
+      currentFileRecord: {
+        fileRecord: {
+          id: "",
+          fileUuid: ""
+        }
+      },
       fileRecordDetail: {},
       sketchGroups: [], // 勾画的集合
       imageUrl: "",
@@ -106,10 +110,17 @@ export default {
     tabList
   },
   methods: {
+    updateMode(mode) {
+      this.mode = mode;
+    },
+    updateCurrentFileRecord(item) {
+      this.currentFileRecord = item;
+      this.getFileRecord();
+    },
     // 图片详情
     getFileRecord() {
       let params = {
-        fileRecordId: this.fileRecordId
+        fileRecordId: this.currentFileRecord.fileRecord.id
       };
       this.$axios
         .get("/jspxcms/cmscp/datamanage/fileRecord/get", { params })
@@ -134,7 +145,7 @@ export default {
     // 影像打标签
     setFileRecordTarget(id) {
       let params = {
-        fileRecordId: this.fileRecordId,
+        fileRecordId: this.currentFileRecord.fileRecord.id,
         targetId: id
       };
       this.$axios
@@ -152,8 +163,8 @@ export default {
     // 影像下载
     fileRecordDownload() {
       this.imageUrl = `/jspxcms/cmscp/datamanage/fileRecord/download?fileRecordId=${
-        this.fileRecordId
-      }&uuid=${this.fileUuid}`;
+        this.currentFileRecord.fileRecord.id
+      }&uuid=${this.currentFileRecord.fileRecord.fileUuid}`;
     },
     // 影像标签列表
     getFileTargeList() {
@@ -189,9 +200,6 @@ export default {
     }
   },
   mounted() {
-    this.fileRecordId = this.$route.query.fileRecordId;
-    this.fileUuid = this.$route.query.fileUuid;
-    this.getFileRecord();
     this.getFileTargeList();
     this.getSketchTargeList();
   }

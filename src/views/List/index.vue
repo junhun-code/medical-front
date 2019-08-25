@@ -7,6 +7,12 @@
         <div class="progress">
           <el-progress :percentage="80"></el-progress>
         </div>
+        <el-button
+          type="primary"
+          style="margin-left: 5px;"
+          @click="openSketchPage"
+          >我的任务</el-button
+        >
       </div>
     </div>
     <div class="list-table">
@@ -70,6 +76,13 @@ export default {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       this.getFileRecordList();
+    },
+    openSketchPage() {
+      const { href } = this.$router.resolve({
+        name: "sketch",
+        query: {}
+      });
+      window.open(href, "_blank");
     }
   },
   created() {

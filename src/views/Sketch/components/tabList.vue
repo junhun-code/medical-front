@@ -1,26 +1,132 @@
 <template>
-  <div class="tab-list">
-    <el-tabs type="border-card">
-      <el-tab-pane label="数据">数据</el-tab-pane>
-      <el-tab-pane label="审核">审核</el-tab-pane>
-      <el-tab-pane label="驳回">驳回</el-tab-pane>
+  <div class="tab-list" v-loading="loading">
+    <el-tabs stretch v-model="mode">
+      <el-tab-pane label="勾画" name="sketch"></el-tab-pane>
+      <el-tab-pane label="审核" name="audit"></el-tab-pane>
     </el-tabs>
+    <div class="task-list">
+      <div
+        class="task-item"
+        :class="{ 'task-selected': currentFileRecord.id === item.id }"
+        v-for="(item, index) in taskList"
+        :key="index"
+        @click="selectCurrentFileRecord(item)"
+      >
+        {{ item.fileRecord.fileName }}
+      </div>
+    </div>
+    <div class="task-pagination">
+      <el-pagination
+        small
+        layout="prev, pager, next"
+        @current-change="handleCurrentChange(item)"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "tab-list",
+  props: [],
   data() {
-    return {};
+    return {
+      mode: "sketch",
+      loading: false,
+      firstFlag: true,
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      taskList: [],
+      currentFileRecord: {
+        id: "",
+        fileUuid: ""
+      }
+    };
   },
   components: {},
-  methods: {},
-  created() {}
+  watch: {
+    mode: {
+      handler(newVal) {
+        console.log(newVal);
+        this.$emit("updateMode", newVal);
+        this.currentPage = 1;
+        this.getMyTask();
+      }
+    }
+  },
+  methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getMyTask();
+    },
+    // 我的任务列表
+    getMyTask(mode) {
+      let formVal = {
+        operate: this.mode === "sketch" ? 1 : 2,
+        current: this.currentPage,
+        size: this.pageSize
+      };
+      this.loading = true;
+      this.$axios.post("/jspxcms/cmscp/datamanage/myTask", formVal).then(
+        res => {
+          this.loading = false;
+          if (res.data.status === 0) {
+            this.taskList = res.data.data.content;
+            this.total = res.data.data.totalPages;
+          } else {
+            this.$message(res.data.message);
+          }
+        },
+        err => {
+          this.loading = false;
+        }
+      );
+    },
+    selectCurrentFileRecord(item) {
+      this.currentFileRecord = item;
+      this.$emit("updateCurrentFileRecord", item);
+    }
+  },
+  created() {},
+  mounted() {
+    this.getMyTask();
+  }
 };
 </script>
 
 <style lang="less" scoped>
 .tab-list {
+  flex-shrink: 0;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  .task-list {
+    flex: 1;
+    .task-item {
+      height: 30px;
+      line-height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: all 0.2s;
+      cursor: pointer;
+      &:nth-child(2n) {
+        background: #f5f5f5;
+      }
+      &:hover {
+        background: #f5f7fa;
+      }
+      &.task-selected {
+        background: #66b1ff !important;
+      }
+    }
+  }
+  .task-pagination {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>
