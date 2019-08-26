@@ -51,7 +51,11 @@
     </el-dialog>
 
     <el-dialog width="500px" title="筛选" :visible.sync="showScreenModal">
-      <screen-modal @updateScreenModal="updateScreenModal"></screen-modal>
+      <screen-modal
+        @updateScreenModal="updateScreenModal"
+        :auditUserList="auditUserList"
+        :sketchUserList="sketchUserList"
+      ></screen-modal>
     </el-dialog>
   </div>
 </template>

@@ -24,7 +24,7 @@
 <script>
 export default {
   name: "screen-modal",
-  props: [],
+  props: ["auditUserList", "sketchUserList"],
   data() {
     return {
       form: {

@@ -212,11 +212,11 @@ export default {
     goToNextPagination() {},
     // 勾画状态设置
     setSketchState() {
-      let formVal = {
+      let params = {
         fileRecordId: this.currentFileRecord.id
       };
       this.$axios
-        .post("/jspxcms/cmscp/datamanage/fileRecord/sketched", formVal)
+        .get("/jspxcms/cmscp/datamanage/fileRecord/sketched", { params })
         .then(
           res => {
             if (res.data.status === 0) {
@@ -233,12 +233,12 @@ export default {
     },
     // 审核状态设置
     setAuditState(audit) {
-      let formVal = {
+      let params = {
         fileRecordId: this.currentFileRecord.id,
         audit: audit
       };
       this.$axios
-        .post("/jspxcms/cmscp/datamanage/fileRecord/audited", formVal)
+        .get("/jspxcms/cmscp/datamanage/fileRecord/audited", { params })
         .then(
           res => {
             if (res.data.status === 0) {
