@@ -148,6 +148,7 @@ export default {
         polygon.targetName = groupItem.targetName;
         this.canvas.add(polygon);
       });
+      this.updateLatestSketchGroups(this.sketchGroups);
     },
     // 内容自动缩放并居中 http://www.hangge.com/blog/cache/detail_1861.html
     zoomToFitCanvas() {
@@ -286,6 +287,9 @@ export default {
     selectFileTarget(item) {
       if (item.id === this.targeId) return;
       this.$emit("selectFileTarget", item.id);
+    },
+    updateLatestSketchGroups(list) {
+      this.$emit("updateLatestSketchGroups", JSON.parse(JSON.stringify(list)));
     }
   },
   created() {},

@@ -62,7 +62,17 @@
         :sketch-groups="sketchGroups"
         :targe-id="targeId"
         @selectFileTarget="setFileRecordTarget"
+        @updateLatestSketchGroups="updateLatestSketchGroups"
       ></fabric>
+    </div>
+    <div class="crop-wrap">
+      <fabric-crop
+        v-for="(item, index) in latestSketchGroups"
+        :key="index"
+        :index="index"
+        :image-url="imageUrl"
+        :sketchDetail="item"
+      ></fabric-crop>
     </div>
     <div class="pagination-control">
       <el-button-group>
@@ -77,6 +87,7 @@
 <script>
 import fabric from "./components/fabric";
 import taskList from "./components/taskList";
+import fabricCrop from "./components/fabricCrop";
 import { mapState } from "vuex";
 export default {
   data() {
@@ -88,6 +99,7 @@ export default {
       },
       fileRecordDetail: {},
       sketchGroups: [], // 勾画的集合
+      latestSketchGroups: [], // 最新勾画集合
       imageUrl: "",
       drawType: "pen",
       fileTargetList: [],
@@ -115,7 +127,8 @@ export default {
   },
   components: {
     fabric,
-    taskList
+    taskList,
+    fabricCrop
   },
   methods: {
     updateMode(mode) {
@@ -207,6 +220,9 @@ export default {
           }
         })
         .catch(err => {});
+    },
+    updateLatestSketchGroups(list) {
+      this.latestSketchGroups = list;
     },
     // 下一条处理
     goToNextPagination() {},
@@ -302,6 +318,11 @@ export default {
     .image-wrap {
       margin-right: 5px;
     }
+  }
+  .crop-wrap {
+    padding: 10px 20px;
+    height: 100px;
+    display: flex;
   }
   .pagination-control {
     display: flex;
