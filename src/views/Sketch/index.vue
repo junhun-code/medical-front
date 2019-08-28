@@ -72,6 +72,7 @@
         :index="index"
         :image-url="imageUrl"
         :sketchDetail="item"
+        :sketch-target-list="sketchTargetList"
       ></fabric-crop>
     </div>
     <div class="pagination-control">
@@ -321,7 +322,6 @@ export default {
   }
   .crop-wrap {
     padding: 10px 20px;
-    height: 100px;
     display: flex;
   }
   .pagination-control {

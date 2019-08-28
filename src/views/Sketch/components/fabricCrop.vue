@@ -1,8 +1,20 @@
 <template>
   <div class="fabric-crop">
-    <canvas :id="canvasId" width="100" height="100">
+    <canvas :id="canvasId" width="130" height="130">
       你的浏览器不支持canvas
     </canvas>
+    <!-- mask标签 -->
+    <div class="sketch-target">
+      <div
+        class="sketch-target-item"
+        :class="{ active: targetIdArr.includes(item.id) }"
+        v-for="(item, index) in sketchTargetList"
+        :key="index"
+        size="small"
+      >
+        {{ item.name }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -11,7 +23,7 @@ import { fabric } from "fabric";
 
 export default {
   name: "fabric-crop",
-  props: ["imageUrl", "index", "sketchDetail"],
+  props: ["imageUrl", "index", "sketchDetail", "sketchTargetList"],
   data() {
     return {
       canvas: null,
@@ -22,6 +34,13 @@ export default {
   computed: {
     canvasId() {
       return `canvas-crop${this.sketchDetail.id}`;
+    },
+    targetIdArr() {
+      if (this.sketchDetail && this.sketchDetail.targetId) {
+        return this.sketchDetail.targetId.split(",");
+      } else {
+        return [];
+      }
     }
   },
   watch: {},
@@ -111,7 +130,22 @@ export default {
 <style lang="less" scoped>
 .fabric-crop {
   margin: 0 5px;
-  width: 100px;
-  height: 100px;
+  height: 130px;
+  display: flex;
+  .sketch-target {
+    display: flex;
+    flex-direction: column;
+    .sketch-target-item {
+      border: 1px solid #0088f0;
+      color: #0088f0;
+      border-radius: 0;
+      padding: 1px 3px;
+      font-size: 12px;
+      &.active {
+        background-color: #0088f0;
+        color: #ffffff;
+      }
+    }
+  }
 }
 </style>

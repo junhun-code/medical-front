@@ -15,15 +15,6 @@
           >{{ item.name }}</el-button
         >
       </div>
-      <!-- mask标签 -->
-      <div class="sketch-target">
-        <el-button
-          v-for="(item, index) in sketchTargetList"
-          :key="index"
-          size="small"
-          >{{ item.name }}</el-button
-        >
-      </div>
     </div>
     <el-dialog
       title="标签选择"
@@ -308,8 +299,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    .file-target,
-    .sketch-target {
+    .file-target {
       display: flex;
       flex-direction: column;
       & > button {
