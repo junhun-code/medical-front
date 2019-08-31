@@ -61,6 +61,7 @@ export default {
       isDragging: false, // 是否正在拖动
       // sketchTargetVisible: false,
       // selectSketchTargetList: [],
+      latestSketchGroups: [],
 
       imageWidth: 0,
       imageHight: 0
@@ -86,7 +87,10 @@ export default {
       }
     },
     sketchGroups: {
-      handler: function(newVal, oldVal) {}
+      handler: function(newVal, oldVal) {
+        this.latestSketchGroups = newVal;
+      },
+      immediate: true
     },
     imageUrl: {
       handler: function(newVal, oldVal) {
@@ -141,7 +145,7 @@ export default {
           fill: "transparent"
         });
         polygon.fileRecordId = groupItem.fileRecordId;
-        polygon.sketchGroupId = groupItem.id;
+        polygon.id = groupItem.id;
         polygon.siteId = groupItem.siteId;
         polygon.targetId = groupItem.targetId;
         polygon.targetName = groupItem.targetName;
@@ -264,7 +268,14 @@ export default {
         res => {
           this.sketchTargetVisible = false;
           if (res.data.status === 0) {
-            lastObject.sketchGroupId = res.data.data;
+            lastObject.id = res.data.data;
+            let newObject = {
+              id: res.data.data,
+              fileRecordId: this.fileRecordId,
+              sketchList: this.canvas.freeDrawingBrush._points
+            };
+            this.latestSketchGroups.push(newObject);
+            this.updateLatestSketchGroups(this.latestSketchGroups);
             this.$message("勾画保存成功");
           } else {
             this.$message.error("勾画保存失败");
@@ -281,9 +292,9 @@ export default {
     },
     // 勾画删除
     sketchDelete(eventTarget) {
-      if (eventTarget.sketchGroupId) {
+      if (eventTarget.id) {
         let params = {
-          sketchGroupId: eventTarget.sketchGroupId
+          sketchGroupId: eventTarget.id
         };
         this.$axios
           .get("/jspxcms/cmscp/datamanage/sketch/delete", { params })
@@ -292,6 +303,11 @@ export default {
               if (res.data.status === 0) {
                 this.canvas.remove(eventTarget);
                 this.canvas.discardActiveObject(); // 清除选中框
+
+                this.latestSketchGroups = this.latestSketchGroups.filter(
+                  item => item.id !== eventTarget.id
+                );
+                this.updateLatestSketchGroups(this.latestSketchGroups);
                 this.$message("删除成功");
               } else {
                 this.$message.error("删除失败");
