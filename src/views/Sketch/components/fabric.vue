@@ -1,7 +1,7 @@
 <template>
   <div class="sketch">
     <canvas id="canvas" width="600" height="500">
-      你的浏览器不支持canvas
+      您的浏览器不支持canvas
     </canvas>
     <!-- 影像标签 -->
     <div class="tag-tool">
@@ -10,7 +10,7 @@
           v-for="(item, index) in fileTargetList"
           :key="index"
           size="small"
-          :type="targeId === item.id ? 'primary' : ''"
+          :type="fileTargetIdArr.includes(item.id) ? 'primary' : ''"
           @click="selectFileTarget(item)"
           >{{ item.name }}</el-button
         >
@@ -50,7 +50,7 @@ export default {
     "fileTargetList",
     "sketchTargetList",
     "sketchGroups",
-    "targeId"
+    "fileTargetIdArr"
   ],
   components: {},
   data() {
@@ -307,7 +307,6 @@ export default {
       }
     },
     selectFileTarget(item) {
-      if (item.id === this.targeId) return;
       this.$emit("selectFileTarget", item.id);
     },
     updateLatestSketchGroups(list) {

@@ -7,10 +7,10 @@
     <div class="sketch-target">
       <div
         class="sketch-target-item"
-        :class="{ 'active-target': targetIdArr.includes(item.id) }"
+        :class="{ 'active-target': sketchTargetIdArr.includes(item.id) }"
         v-for="(item, index) in sketchTargetList"
         :key="index"
-        size="small"
+        @click="selectSketchTarget(item)"
       >
         {{ item.name }}
       </div>
@@ -30,7 +30,7 @@ export default {
       imageWidth: 0,
       imageHight: 0,
 
-      targetIdArr: []
+      sketchTargetIdArr: []
     };
   },
   computed: {
@@ -68,15 +68,18 @@ export default {
         this.imageHight = oImg.height;
         oImg.selectable = false; // 在单个元素上设置 selectable为false，这样设置的单个元素是无法选择和拖动了。
         this.canvas.add(oImg);
+        this.initSketchTargetArr();
         this.initPolygon();
         this.zoomToFitCanvas();
       });
     },
-    initTargetArr() {
+    initSketchTargetArr() {
       if (this.sketchDetail && this.sketchDetail.targetId) {
-        this.targetIdArr = this.sketchDetail.targetId.split(",");
+        this.sketchTargetIdArr = this.sketchDetail.targetId
+          .split(",")
+          .map(item => Number(item));
       } else {
-        this.targetIdArr = [];
+        this.sketchTargetIdArr = [];
       }
     },
     initPolygon() {
@@ -130,7 +133,38 @@ export default {
       //开始缩放
       this.canvas.zoomToPoint(zoomPoint, zoom);
     },
-    selectSketchTarget(target) {}
+    selectSketchTarget(target) {
+      this.sketchSave(target.id);
+    },
+    // 勾画保存
+    sketchSave(id) {
+      let newArr = [];
+      if (!this.sketchTargetIdArr.includes(id)) {
+        newArr = [...this.sketchTargetIdArr, id];
+      } else {
+        newArr = this.sketchTargetIdArr.filter(item => item !== id);
+      }
+
+      let formVal = {
+        fileRecordId: this.sketchDetail.fileRecordId,
+        sketchGroupId: this.sketchDetail.id,
+        targetId: newArr.join(",")
+      };
+      this.$axios.post("/jspxcms/cmscp/datamanage/sketch/save", formVal).then(
+        res => {
+          this.sketchTargetVisible = false;
+          if (res.data.status === 0) {
+            this.$message("勾画保存成功");
+            this.sketchTargetIdArr = newArr;
+          } else {
+            this.$message.error("勾画保存失败");
+          }
+        },
+        err => {
+          this.$message.error("勾画保存失败");
+        }
+      );
+    }
   },
   created() {},
   mounted() {
@@ -153,6 +187,10 @@ export default {
       border-radius: 0;
       padding: 1px 3px;
       font-size: 12px;
+      cursor: pointer;
+      &:hover {
+        background-color: #ecf5ff;
+      }
       &.active-target {
         background-color: #0088f0;
         color: #ffffff;

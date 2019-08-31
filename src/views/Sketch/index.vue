@@ -60,7 +60,7 @@
         :file-target-list="fileTargetList"
         :sketch-target-list="sketchTargetList"
         :sketch-groups="sketchGroups"
-        :targe-id="targeId"
+        :fileTargetIdArr="fileTargetIdArr"
         @selectFileTarget="setFileRecordTarget"
         @updateLatestSketchGroups="updateLatestSketchGroups"
       ></fabric>
@@ -105,7 +105,7 @@ export default {
       drawType: "pen",
       fileTargetList: [],
       sketchTargetList: [],
-      targeId: null
+      fileTargetIdArr: []
     };
   },
   computed: {
@@ -149,9 +149,6 @@ export default {
         .then(res => {
           if (res.data.status === 0) {
             this.fileRecordDetail = res.data.data;
-            if (this.fileRecordDetail.targeId) {
-              this.targeId = this.fileRecordDetail.targeId;
-            }
             this.sketchGroups = this.fileRecordDetail.sketchGroups || [];
             this.sketchGroups.forEach(groupItem => {
               groupItem.sketchList = groupItem.sketchList.map(sketchItem => {
@@ -162,21 +159,34 @@ export default {
               });
             });
             this.fileRecordDownload();
+            this.initFileTargetArr();
           }
         })
         .catch(err => {});
     },
+    initFileTargetArr() {
+      this.fileTargetIdArr = this.fileRecordDetail.targetList.map(
+        item => item.id
+      );
+    },
     // 影像打标签
     setFileRecordTarget(id) {
+      let newArr = [];
+      if (!this.fileTargetIdArr.includes(id)) {
+        newArr = [...this.fileTargetIdArr, id];
+      } else {
+        newArr = this.fileTargetIdArr.filter(item => item !== id);
+      }
+
       let params = {
         fileRecordId: this.currentFileRecord.id,
-        targetId: id
+        targetId: newArr.join(",")
       };
       this.$axios
         .get("/jspxcms/cmscp/datamanage/fileRecord/targeted", { params })
         .then(res => {
           if (res.data.status === 0) {
-            this.targeId = id;
+            this.fileTargetIdArr = newArr;
             this.$message.success("影像打标签成功");
           } else {
             this.$message(res.data.message);
