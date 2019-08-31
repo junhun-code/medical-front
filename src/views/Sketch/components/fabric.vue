@@ -16,7 +16,7 @@
         >
       </div>
     </div>
-    <el-dialog
+    <!-- <el-dialog
       title="标签选择"
       width="200px"
       :visible.sync="sketchTargetVisible"
@@ -24,11 +24,18 @@
       <el-button
         v-for="(item, index) in sketchTargetList"
         :key="index"
-        type="primary"
+        :type="selectSketchTargetList.includes(item.id) ? 'primary' : ''"
         @click="selectSketchTarget(item)"
         >{{ item.name }}</el-button
       >
-    </el-dialog>
+      <el-button
+        round
+        type="info"
+        style="margin-top: 20px"
+        @click="confirmTarget"
+        >确认</el-button
+      >
+    </el-dialog> -->
   </div>
 </template>
 
@@ -52,7 +59,8 @@ export default {
       drawWidth: 2, //笔触宽度
       color: "#E34F51", //画笔颜色
       isDragging: false, // 是否正在拖动
-      sketchTargetVisible: false,
+      // sketchTargetVisible: false,
+      // selectSketchTargetList: [],
 
       imageWidth: 0,
       imageHight: 0
@@ -178,8 +186,9 @@ export default {
             positionY: parseInt(item.y)
           };
         });
-        this.sketchTargetVisible = true;
+        // this.sketchTargetVisible = true;
         this.currentPoints = points;
+        this.sketchSave();
       });
     },
     // 选中删除
@@ -226,54 +235,76 @@ export default {
         }
       });
     },
-    selectSketchTarget(target) {
-      this.sketchSave(target.id);
-    },
+    // selectSketchTarget(target) {
+    //   if (this.selectSketchTargetList.includes(target.id)) {
+    //     this.selectSketchTargetList = this.selectSketchTargetList.filter(
+    //       item => item !== target.id
+    //     );
+    //   } else {
+    //     this.selectSketchTargetList.push(target.id);
+    //   }
+    // },
+    // confirmTarget() {
+    //   if (this.selectSketchTargetList.length) {
+    //     this.sketchSave();
+    //   } else {
+    //     this.$message.error("请先选择标签");
+    //   }
+    // },
     // 勾画保存
-    sketchSave(targetId) {
+    sketchSave() {
+      let objects = this.canvas.getObjects();
+      let lastObject = this.canvas.item(objects.length - 1);
       let formVal = {
         fileRecordId: this.fileRecordId,
         sketchList: this.currentPoints,
-        targetId: targetId
+        targetId: ""
       };
       this.$axios.post("/jspxcms/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
           if (res.data.status === 0) {
-            let objects = this.canvas.getObjects();
-            let lastObject = this.canvas.item(objects.length - 1);
             lastObject.sketchGroupId = res.data.data;
             this.$message("勾画保存成功");
           } else {
             this.$message.error("勾画保存失败");
+            this.canvas.remove(lastObject);
+            this.canvas.discardActiveObject(); // 清除选中框
           }
         },
         err => {
           this.$message.error("勾画保存失败");
+          this.canvas.remove(lastObject);
+          this.canvas.discardActiveObject(); // 清除选中框
         }
       );
     },
     // 勾画删除
     sketchDelete(eventTarget) {
-      let params = {
-        sketchGroupId: eventTarget.sketchGroupId
-      };
-      this.$axios
-        .get("/jspxcms/cmscp/datamanage/sketch/delete", { params })
-        .then(
-          res => {
-            if (res.data.status === 0) {
-              this.canvas.remove(eventTarget);
-              this.canvas.discardActiveObject(); // 清除选中框
-              this.$message("删除成功");
-            } else {
+      if (eventTarget.sketchGroupId) {
+        let params = {
+          sketchGroupId: eventTarget.sketchGroupId
+        };
+        this.$axios
+          .get("/jspxcms/cmscp/datamanage/sketch/delete", { params })
+          .then(
+            res => {
+              if (res.data.status === 0) {
+                this.canvas.remove(eventTarget);
+                this.canvas.discardActiveObject(); // 清除选中框
+                this.$message("删除成功");
+              } else {
+                this.$message.error("删除失败");
+              }
+            },
+            err => {
               this.$message.error("删除失败");
             }
-          },
-          err => {
-            this.$message.error("删除失败");
-          }
-        );
+          );
+      } else {
+        this.canvas.remove(eventTarget);
+        this.canvas.discardActiveObject(); // 清除选中框
+      }
     },
     selectFileTarget(item) {
       if (item.id === this.targeId) return;

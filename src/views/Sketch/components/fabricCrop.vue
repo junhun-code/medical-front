@@ -7,7 +7,7 @@
     <div class="sketch-target">
       <div
         class="sketch-target-item"
-        :class="{ active: targetIdArr.includes(item.id) }"
+        :class="{ 'active-target': targetIdArr.includes(item.id) }"
         v-for="(item, index) in sketchTargetList"
         :key="index"
         size="small"
@@ -28,24 +28,28 @@ export default {
     return {
       canvas: null,
       imageWidth: 0,
-      imageHight: 0
+      imageHight: 0,
+
+      targetIdArr: []
     };
   },
   computed: {
     canvasId() {
       return `canvas-crop${this.sketchDetail.id}`;
-    },
-    targetIdArr() {
-      if (this.sketchDetail && this.sketchDetail.targetId) {
-        return this.sketchDetail.targetId.split(",");
-      } else {
-        return [];
+    }
+  },
+  watch: {
+    sketchDetail: {
+      handler(newVal, oldVal) {
+        this.updateCanvas();
       }
     }
   },
-  watch: {},
   components: {},
   methods: {
+    updateCanvas() {
+      this.initImage();
+    },
     initCanvas() {
       //初始化画板
       this.canvas = new fabric.Canvas(this.canvasId, {
@@ -67,6 +71,13 @@ export default {
         this.initPolygon();
         this.zoomToFitCanvas();
       });
+    },
+    initTargetArr() {
+      if (this.sketchDetail && this.sketchDetail.targetId) {
+        this.targetIdArr = this.sketchDetail.targetId.split(",");
+      } else {
+        this.targetIdArr = [];
+      }
     },
     initPolygon() {
       let groupItem = this.sketchDetail;
@@ -118,7 +129,8 @@ export default {
       );
       //开始缩放
       this.canvas.zoomToPoint(zoomPoint, zoom);
-    }
+    },
+    selectSketchTarget(target) {}
   },
   created() {},
   mounted() {
@@ -141,7 +153,7 @@ export default {
       border-radius: 0;
       padding: 1px 3px;
       font-size: 12px;
-      &.active {
+      &.active-target {
         background-color: #0088f0;
         color: #ffffff;
       }
