@@ -296,25 +296,27 @@ export default {
         let params = {
           sketchGroupId: eventTarget.id
         };
-        this.$axios.get("/msci/cmscp/datamanage/sketch/delete", { params }).then(
-          res => {
-            if (res.data.status === 0) {
-              this.canvas.remove(eventTarget);
-              this.canvas.discardActiveObject(); // 清除选中框
+        this.$axios
+          .get("/msci/cmscp/datamanage/sketch/delete", { params })
+          .then(
+            res => {
+              if (res.data.status === 0) {
+                this.canvas.remove(eventTarget);
+                this.canvas.discardActiveObject(); // 清除选中框
 
-              this.latestSketchGroups = this.latestSketchGroups.filter(
-                item => item.id !== eventTarget.id
-              );
-              this.updateLatestSketchGroups(this.latestSketchGroups);
-              this.$message("删除成功");
-            } else {
+                this.latestSketchGroups = this.latestSketchGroups.filter(
+                  item => item.id !== eventTarget.id
+                );
+                this.updateLatestSketchGroups(this.latestSketchGroups);
+                this.$message("删除成功");
+              } else {
+                this.$message.error("删除失败");
+              }
+            },
+            err => {
               this.$message.error("删除失败");
             }
-          },
-          err => {
-            this.$message.error("删除失败");
-          }
-        );
+          );
       } else {
         this.canvas.remove(eventTarget);
         this.canvas.discardActiveObject(); // 清除选中框

@@ -247,19 +247,21 @@ export default {
       let params = {
         fileRecordId: this.currentFileRecord.id
       };
-      this.$axios.get("/msci/cmscp/datamanage/fileRecord/sketched", { params }).then(
-        res => {
-          if (res.data.status === 0) {
-            this.$message("勾画状态设置成功");
-            this.nextTask();
-          } else {
-            this.$message.error(res.data.message);
+      this.$axios
+        .get("/msci/cmscp/datamanage/fileRecord/sketched", { params })
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.$message("勾画状态设置成功");
+              this.nextTask();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("勾画状态设置失败");
           }
-        },
-        err => {
-          this.$message.error("勾画状态设置失败");
-        }
-      );
+        );
     },
     // 审核状态设置
     setAuditState(audit) {
@@ -267,19 +269,21 @@ export default {
         fileRecordId: this.currentFileRecord.id,
         audit: audit
       };
-      this.$axios.get("/msci/cmscp/datamanage/fileRecord/audited", { params }).then(
-        res => {
-          if (res.data.status === 0) {
-            this.$message("审核状态设置成功");
-            this.nextTask();
-          } else {
-            this.$message.error(res.data.message);
+      this.$axios
+        .get("/msci/cmscp/datamanage/fileRecord/audited", { params })
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.$message("审核状态设置成功");
+              this.nextTask();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("审核状态设置失败");
           }
-        },
-        err => {
-          this.$message.error("审核状态设置失败");
-        }
-      );
+        );
     },
     // 我的任务下一条
     nextTask() {

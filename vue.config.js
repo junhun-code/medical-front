@@ -15,7 +15,7 @@ module.exports = {
     proxy: {
       "/msci": {
         target: "http://60.191.84.4:8088/",
-        pathRewrite: { '^/msci': '' },
+        pathRewrite: { "^/msci": "" },
         changeOrigin: true,
         ws: false, //值为false防止控制台报错
         secure: false
