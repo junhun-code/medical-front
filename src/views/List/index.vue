@@ -162,8 +162,36 @@ export default {
                 let filePathArr = item.filePath.split("/");
                 if (filePathArr.length) {
                   let hospitalInfoArr = filePathArr[0].split("-");
+                  let [
+                    hospitalName = "",
+                    hospitalId = "",
+                    checkPosition = ""
+                  ] = hospitalInfoArr;
+                  item.hospitalName = hospitalName;
+                  item.hospitalId = hospitalId;
+                  item.checkPosition = checkPosition;
+                }
+                if (filePathArr.length > 1) {
+                  let patientInfoArr = filePathArr[1].split("-");
+                  let [
+                    patientId = "",
+                    patientName = "",
+                    patientSex = "",
+                    patientAge = ""
+                  ] = patientInfoArr;
+                  item.patientId = patientId;
+                  item.patientName = patientName;
+                  item.patientSex = patientSex;
+                  item.patientAge = patientAge;
+                }
+                if (filePathArr.length > 2) {
+                  item.checkId = filePathArr[2];
+                }
+                if (filePathArr.length > 3) {
+                  item.mediaId = filePathArr[3];
                 }
               });
+              console.log("[recordList]", recordList);
               this.recordList = recordList;
               this.total = res.data.data.totalElements;
             }

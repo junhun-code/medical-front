@@ -38,6 +38,27 @@
         width="80"
       ></el-table-column>
       <el-table-column
+        prop="hospitalName"
+        label="医院名称"
+        width="130"
+      ></el-table-column>
+      <el-table-column prop="hospitalId" label="医院编号"></el-table-column>
+      <el-table-column prop="checkPosition" label="检查部位"></el-table-column>
+      <el-table-column prop="patientId" label="患者编号"></el-table-column>
+      <el-table-column prop="patientName" label="患者姓名"></el-table-column>
+      <el-table-column prop="patientSex" label="性别"></el-table-column>
+      <el-table-column prop="patientAge" label="年龄"></el-table-column>
+      <el-table-column
+        prop="checkId"
+        label="检查号"
+        width="130"
+      ></el-table-column>
+      <el-table-column
+        prop="mediaId"
+        label="具体检查影像"
+        width="250"
+      ></el-table-column>
+      <el-table-column
         prop="trainVersion"
         label="训练版本"
         width="80"
