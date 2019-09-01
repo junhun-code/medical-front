@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
-    "build:prod": "vue-cli-service build --mode production",
     "build:test": "vue-cli-service build --mode test",
+    "build:prod": "vue-cli-service build --mode production",
     "upload:test": "node ./bin/upload.test.js",
+    "upload:prod": "node ./bin/upload.prod.js",
     "deploy:test": "npm run build:test && npm run upload:test",
+    "deploy:prod": "npm run build:prod && npm run upload:prod",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
