@@ -130,7 +130,7 @@ export default {
       };
       this.$axios
         .post(
-          "/cmscp/datamanage/fileRecord/list",
+          "/msci/cmscp/datamanage/fileRecord/list",
           Object.assign(formVal, this.screenData)
         )
         .then(
@@ -138,6 +138,7 @@ export default {
             if (res.data.status === 0) {
               let recordList = res.data.data.content;
               recordList.forEach(item => {
+                // 数据状态
                 if (item.trained) {
                   item.status = "已训练";
                 } else if (item.audited == 1) {
@@ -156,6 +157,11 @@ export default {
                   item.status = "未分配";
                 } else {
                   item.status = "";
+                }
+                // 路径解析
+                let filePathArr = item.filePath.split("/");
+                if (filePathArr.length) {
+                  let hospitalInfoArr = filePathArr[0].split("-");
                 }
               });
               this.recordList = recordList;

@@ -5,7 +5,7 @@
         <el-upload
           class="upload-demo"
           ref="upload"
-          action="/cmscp/datamanage/fileRecord/zip_upload"
+          action="/msci/cmscp/datamanage/fileRecord/zip_upload"
           :before-upload="beforeUploadPackage"
           :on-success="handleFileSuccess"
           :on-error="handleFileError"

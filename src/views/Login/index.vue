@@ -51,7 +51,7 @@ export default {
           let formData = new FormData();
           formData.append("username", this.ruleForm.username);
           formData.append("password", this.ruleForm.password);
-          this.$axios.post("/site-1/datamanage/login", formData).then(
+          this.$axios.post("/msci/site-1/datamanage/login", formData).then(
             res => {
               if (res.data.status === 0) {
                 this.$message.success("登录成功");

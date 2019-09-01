@@ -78,7 +78,7 @@ export default {
         userName: selectedUser.realName || undefined,
         operate: this.form.type === "sktech" ? 1 : 2
       };
-      this.$axios.post("/cmscp/datamanage/task/allot", formVal).then(
+      this.$axios.post("/msci/cmscp/datamanage/task/allot", formVal).then(
         res => {
           if (res.data.status === 0) {
             this.$message("任务分配成功");

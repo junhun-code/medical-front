@@ -72,7 +72,7 @@ export default {
         size: this.pageSize
       };
       this.loading = true;
-      this.$axios.post("/cmscp/datamanage/myTask", formVal).then(
+      this.$axios.post("/msci/cmscp/datamanage/myTask", formVal).then(
         res => {
           this.loading = false;
           if (res.data.status === 0) {

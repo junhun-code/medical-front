@@ -152,7 +152,7 @@ export default {
         sketchGroupId: this.sketchDetail.id,
         targetId: newArr.join(",")
       };
-      this.$axios.post("/cmscp/datamanage/sketch/save", formVal).then(
+      this.$axios.post("/msci/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
           this.loading = false;

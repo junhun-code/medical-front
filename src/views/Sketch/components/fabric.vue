@@ -264,7 +264,7 @@ export default {
         sketchList: this.currentPoints,
         targetId: ""
       };
-      this.$axios.post("/cmscp/datamanage/sketch/save", formVal).then(
+      this.$axios.post("/msci/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
           if (res.data.status === 0) {
@@ -296,7 +296,7 @@ export default {
         let params = {
           sketchGroupId: eventTarget.id
         };
-        this.$axios.get("/cmscp/datamanage/sketch/delete", { params }).then(
+        this.$axios.get("/msci/cmscp/datamanage/sketch/delete", { params }).then(
           res => {
             if (res.data.status === 0) {
               this.canvas.remove(eventTarget);
