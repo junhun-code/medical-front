@@ -74,6 +74,14 @@
             >{{ item }}</el-radio
           >
         </el-radio-group>
+        <el-button
+          class="clear-status"
+          type="success"
+          size="mini"
+          round
+          @click="form.status = ''"
+          >清除状态</el-button
+        >
       </el-form-item>
       <el-form-item label="分配状态">
         <el-radio-group v-model="form.allotedStatus">
@@ -84,6 +92,14 @@
             >{{ item }}</el-radio
           >
         </el-radio-group>
+        <el-button
+          class="clear-status"
+          type="success"
+          size="mini"
+          round
+          @click="form.allotedStatus = ''"
+          >清除状态</el-button
+        >
       </el-form-item>
       <!-- 数据格式 -->
       <el-form-item label="分配状态">
@@ -95,6 +111,14 @@
             >{{ item }}</el-radio
           >
         </el-radio-group>
+        <el-button
+          class="clear-status"
+          type="success"
+          size="mini"
+          round
+          @click="form.fileType = ''"
+          >清除状态</el-button
+        >
       </el-form-item>
 
       <el-form-item>
@@ -147,6 +171,9 @@ export default {
 
 <style lang="less" scoped>
 .el-select {
+  margin-left: 20px;
+}
+.clear-status {
   margin-left: 20px;
 }
 </style>
