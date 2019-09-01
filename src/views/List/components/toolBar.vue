@@ -50,11 +50,13 @@
       ></task-modal>
     </el-dialog>
 
-    <el-dialog width="500px" title="筛选" :visible.sync="showScreenModal">
+    <el-dialog width="700px" title="筛选" :visible.sync="showScreenModal">
       <screen-modal
         @updateScreenModal="updateScreenModal"
+        @updateScreenData="updateScreenData"
         :auditUserList="auditUserList"
         :sketchUserList="sketchUserList"
+        :importUserList="importUserList"
       ></screen-modal>
     </el-dialog>
   </div>
@@ -81,7 +83,7 @@ export default {
       showScreenModal: false,
       auditUserList: [],
       sketchUserList: [],
-      users: []
+      importUserList: []
     };
   },
   computed: {
@@ -112,6 +114,9 @@ export default {
     updateScreenModal(value) {
       this.showTaskModal = value;
     },
+    updateScreenData(value) {
+      this.$emit("updateScreenData", value);
+    },
     openTaskModal() {
       if (this.selectedRecords.length === 0) {
         this.$message.info("未选择数据");
@@ -133,13 +138,13 @@ export default {
         })
         .catch(err => {});
     },
-    // 用户下拉框模糊查询
+    // 用户下拉框模糊查询（导入人员）
     getUsers() {
       this.$axios
         .get("/jspxcms/cmscp/datamanage/fileRecord/users")
         .then(res => {
           if (res.data.status === 0) {
-            this.users = res.data.data.auditUserList || [];
+            this.importUserList = res.data.data || [];
           } else {
             this.$message(res.data.message);
           }
@@ -148,6 +153,7 @@ export default {
     }
   },
   mounted() {
+    this.getUsers();
     this.getUserList();
   }
 };

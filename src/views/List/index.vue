@@ -1,7 +1,7 @@
 <template>
   <div class="list-container">
     <div class="head-info">
-      <tool-bar></tool-bar>
+      <tool-bar @updateScreenData="updateScreenData"></tool-bar>
       <div class="progress-wrap">
         <span>任务共1000例，完成进度</span>
         <div class="progress">
@@ -37,6 +37,19 @@ import recordTable from "./components/recordTable";
 export default {
   data() {
     return {
+      screenData: {
+        importId: undefined,
+        importTimeStart: undefined,
+        importTimeEnd: undefined,
+
+        sketchId: undefined,
+        sketchTimeStart: undefined,
+        sketchTimeEnd: undefined,
+
+        auditorId: undefined,
+        auditorTimeStart: undefined,
+        auditorTimeEnd: undefined
+      },
       recordList: [],
       currentPage: 1,
       pageSize: 10,
@@ -48,13 +61,44 @@ export default {
     recordTable
   },
   methods: {
+    updateScreenData(value) {
+      let screenData = {};
+      screenData["importId"] = value.importUser
+        ? value.importUser.id
+        : undefined;
+      screenData["sketchId"] = value.sketchUser
+        ? value.sketchUser.id
+        : undefined;
+      screenData["auditorId"] = value.auditUser
+        ? value.auditUser.id
+        : undefined;
+      if (value.importTime && value.importTime.length === 2) {
+        screenData["importTimeStart"] = value.importTime[0];
+        screenData["importTimeEnd"] = value.importTime[1];
+      }
+      if (value.sketchTime && value.sketchTime.length === 2) {
+        screenData["sketchTimeStart"] = value.sketchTime[0];
+        screenData["sketchTimeEnd"] = value.sketchTime[1];
+      }
+      if (value.auditorTime && value.auditorTime.length === 2) {
+        screenData["auditorTimeStart"] = value.auditorTime[0];
+        screenData["auditorTimeEnd"] = value.auditorTime[1];
+      }
+
+      this.screenData = screenData;
+      this.currentPage = 1;
+      this.getFileRecordList();
+    },
     getFileRecordList() {
       let formVal = {
         current: this.currentPage,
         size: this.pageSize
       };
       this.$axios
-        .post("/jspxcms/cmscp/datamanage/fileRecord/list", formVal)
+        .post(
+          "/jspxcms/cmscp/datamanage/fileRecord/list",
+          Object.assign(formVal, this.screenData)
+        )
         .then(
           res => {
             if (res.data.status === 0) {
