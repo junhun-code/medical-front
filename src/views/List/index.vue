@@ -121,7 +121,7 @@ export default {
                 } else if (item.alloted === 0) {
                   item.status = "未分配";
                 } else {
-                  item.status = "xw";
+                  item.status = "";
                 }
               });
               this.recordList = recordList;
