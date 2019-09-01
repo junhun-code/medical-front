@@ -13,7 +13,7 @@
     >
       <el-table-column type="selection" width="45" fixed></el-table-column>
       <el-table-column prop="id" label="序号" width="60"></el-table-column>
-      <el-table-column prop="name" label="状态" width="120"></el-table-column>
+      <el-table-column prop="status" label="状态" width="120"></el-table-column>
       <el-table-column prop="importName" label="入库人员"></el-table-column>
       <el-table-column label="入库时间" width="100">
         <template slot-scope="scope">{{

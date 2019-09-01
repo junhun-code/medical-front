@@ -102,7 +102,29 @@ export default {
         .then(
           res => {
             if (res.data.status === 0) {
-              this.recordList = res.data.data.content;
+              let recordList = res.data.data.content;
+              recordList.forEach(item => {
+                if (item.trained) {
+                  item.status = "已训练";
+                } else if (item.audited == 1) {
+                  item.status = "已审核";
+                } else if (item.audited == 2) {
+                  item.status = "已驳回";
+                } else if (item.sketched) {
+                  item.status = "已标注";
+                } else if (item.alloted === 10) {
+                  item.status = "分配勾画";
+                } else if (item.alloted === 1) {
+                  item.status = "分配审核";
+                } else if (item.alloted === 11) {
+                  item.status = "分配勾画审核";
+                } else if (item.alloted === 0) {
+                  item.status = "未分配";
+                } else {
+                  item.status = "xw";
+                }
+              });
+              this.recordList = recordList;
               this.total = res.data.data.totalElements;
             }
           },
