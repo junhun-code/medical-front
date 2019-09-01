@@ -264,7 +264,7 @@ export default {
         sketchList: this.currentPoints,
         targetId: ""
       };
-      this.$axios.post("/jspxcms/cmscp/datamanage/sketch/save", formVal).then(
+      this.$axios.post("/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
           if (res.data.status === 0) {
@@ -296,27 +296,25 @@ export default {
         let params = {
           sketchGroupId: eventTarget.id
         };
-        this.$axios
-          .get("/jspxcms/cmscp/datamanage/sketch/delete", { params })
-          .then(
-            res => {
-              if (res.data.status === 0) {
-                this.canvas.remove(eventTarget);
-                this.canvas.discardActiveObject(); // 清除选中框
+        this.$axios.get("/cmscp/datamanage/sketch/delete", { params }).then(
+          res => {
+            if (res.data.status === 0) {
+              this.canvas.remove(eventTarget);
+              this.canvas.discardActiveObject(); // 清除选中框
 
-                this.latestSketchGroups = this.latestSketchGroups.filter(
-                  item => item.id !== eventTarget.id
-                );
-                this.updateLatestSketchGroups(this.latestSketchGroups);
-                this.$message("删除成功");
-              } else {
-                this.$message.error("删除失败");
-              }
-            },
-            err => {
+              this.latestSketchGroups = this.latestSketchGroups.filter(
+                item => item.id !== eventTarget.id
+              );
+              this.updateLatestSketchGroups(this.latestSketchGroups);
+              this.$message("删除成功");
+            } else {
               this.$message.error("删除失败");
             }
-          );
+          },
+          err => {
+            this.$message.error("删除失败");
+          }
+        );
       } else {
         this.canvas.remove(eventTarget);
         this.canvas.discardActiveObject(); // 清除选中框

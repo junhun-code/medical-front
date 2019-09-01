@@ -48,7 +48,13 @@ export default {
 
         auditorId: undefined,
         auditorTimeStart: undefined,
-        auditorTimeEnd: undefined
+        auditorTimeEnd: undefined,
+
+        trained: undefined,
+        audited: undefined,
+        sketched: undefined,
+        alloted: undefined,
+        fileType: undefined
       },
       recordList: [],
       currentPage: 1,
@@ -63,6 +69,7 @@ export default {
   methods: {
     updateScreenData(value) {
       let screenData = {};
+      //
       screenData["importId"] = value.importUser
         ? value.importUser.id
         : undefined;
@@ -84,6 +91,33 @@ export default {
         screenData["auditorTimeStart"] = value.auditorTime[0];
         screenData["auditorTimeEnd"] = value.auditorTime[1];
       }
+      // 数据状态
+      screenData["trained"] = 0;
+      screenData["audited"] = 0;
+      screenData["sketched"] = 0;
+      if (value.status === "已训练") {
+        screenData["trained"] = 1;
+      } else if (value.status === "已驳回") {
+        screenData["audited"] = 2;
+      } else if (value.status === "已审核") {
+        screenData["audited"] = 1;
+      } else if (value.status === "已标注") {
+        screenData["sketched"] = 1;
+      } else if (value.status === "未标注") {
+        screenData["sketched"] = 0;
+      }
+      screenData["alloted"] = 0;
+      if (value.allotedStatus === "分配勾画审核") {
+        screenData["alloted"] = 11;
+      } else if (value.allotedStatus === "分配审核") {
+        screenData["alloted"] = 1;
+      } else if (value.allotedStatus === "分配勾画") {
+        screenData["alloted"] = 10;
+      } else if (value.allotedStatus === "未分配") {
+        screenData["alloted"] = 0;
+      }
+      // 数据格式
+      screenData["fileType"] = value.fileType || undefined;
 
       this.screenData = screenData;
       this.currentPage = 1;
@@ -96,7 +130,7 @@ export default {
       };
       this.$axios
         .post(
-          "/jspxcms/cmscp/datamanage/fileRecord/list",
+          "/cmscp/datamanage/fileRecord/list",
           Object.assign(formVal, this.screenData)
         )
         .then(

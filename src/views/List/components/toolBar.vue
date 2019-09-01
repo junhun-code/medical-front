@@ -127,7 +127,7 @@ export default {
     // 勾画、审核人员列表
     getUserList() {
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/role/userlist")
+        .get("/cmscp/datamanage/role/userlist")
         .then(res => {
           if (res.data.status === 0) {
             this.auditUserList = res.data.data.auditUserList || [];
@@ -141,7 +141,7 @@ export default {
     // 用户下拉框模糊查询（导入人员）
     getUsers() {
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/fileRecord/users")
+        .get("/cmscp/datamanage/fileRecord/users")
         .then(res => {
           if (res.data.status === 0) {
             this.importUserList = res.data.data || [];

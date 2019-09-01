@@ -64,6 +64,38 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <!-- 数据状态 -->
+      <el-form-item label="数据状态">
+        <el-radio-group v-model="form.status">
+          <el-radio
+            v-for="(item, index) in statusList"
+            :key="index"
+            :label="item"
+            >{{ item }}</el-radio
+          >
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="分配状态">
+        <el-radio-group v-model="form.allotedStatus">
+          <el-radio
+            v-for="(item, index) in allotedStatusList"
+            :key="index"
+            :label="item"
+            >{{ item }}</el-radio
+          >
+        </el-radio-group>
+      </el-form-item>
+      <!-- 数据格式 -->
+      <el-form-item label="分配状态">
+        <el-radio-group v-model="form.fileType">
+          <el-radio
+            v-for="(item, index) in fileTypeList"
+            :key="index"
+            :label="item"
+            >{{ item }}</el-radio
+          >
+        </el-radio-group>
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="confirmSearch">搜索</el-button>
@@ -87,11 +119,17 @@ export default {
         sketchTime: "",
         // 审核
         auditUser: "",
-        auditorTime: ""
+        auditorTime: "",
+        // 数据状态
+        status: "",
+        // 分配状态
+        allotedStatus: "",
+        // 数据格式
+        fileType: ""
       },
       statusList: ["未标注", "已标注", "已审核", "已驳回", "已训练"],
-      allotedStatusList: ["未分配", "分配勾画", "分配审核"],
-      fileTypeList: []
+      allotedStatusList: ["未分配", "分配勾画", "分配审核", "分配勾画审核"],
+      fileTypeList: ["dicom", "jpg", "png", "bmp"]
     };
   },
   watch: {},

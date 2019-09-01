@@ -45,7 +45,7 @@
       <el-table-column label="操作" width="80" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" @click="openSketchPage(scope.row)"
-            >勾画</el-button
+            >查看</el-button
           >
         </template>
       </el-table-column>

@@ -17,7 +17,7 @@ var router = new Router({
 router.beforeEach((to, from, next) => {
   // 数据列表、勾画权限查询
   if (to.name !== "login") {
-    axios.get("/jspxcms/cmscp/datamanage/dataManage/perms").then(
+    axios.get("/cmscp/datamanage/dataManage/perms").then(
       res => {
         if (res.data.status === 0) {
           store.commit("SET_DATA_MANAGE_PERMS", res.data.data);

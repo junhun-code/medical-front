@@ -147,7 +147,7 @@ export default {
         fileRecordId: this.currentFileRecord.id
       };
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/fileRecord/get", { params })
+        .get("/cmscp/datamanage/fileRecord/get", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileRecordDetail = res.data.data;
@@ -185,7 +185,7 @@ export default {
         targetId: newArr.join(",")
       };
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/fileRecord/targeted", { params })
+        .get("/cmscp/datamanage/fileRecord/targeted", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileTargetIdArr = newArr;
@@ -199,7 +199,7 @@ export default {
     // 影像下载
     fileRecordDownload() {
       if (!this.currentFileRecord || !this.currentFileRecord.id) return;
-      this.imageUrl = `/jspxcms/cmscp/datamanage/fileRecord/download?fileRecordId=${
+      this.imageUrl = `//cmscp/datamanage/fileRecord/download?fileRecordId=${
         this.currentFileRecord.id
       }&uuid=${this.currentFileRecord.fileUuid}`;
     },
@@ -209,7 +209,7 @@ export default {
         type: 1
       };
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/target/list", { params })
+        .get("/cmscp/datamanage/target/list", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.fileTargetList = res.data.data;
@@ -225,7 +225,7 @@ export default {
         type: 2
       };
       this.$axios
-        .get("/jspxcms/cmscp/datamanage/target/list", { params })
+        .get("/cmscp/datamanage/target/list", { params })
         .then(res => {
           if (res.data.status === 0) {
             this.sketchTargetList = res.data.data;
@@ -247,21 +247,19 @@ export default {
       let params = {
         fileRecordId: this.currentFileRecord.id
       };
-      this.$axios
-        .get("/jspxcms/cmscp/datamanage/fileRecord/sketched", { params })
-        .then(
-          res => {
-            if (res.data.status === 0) {
-              this.$message("勾画状态设置成功");
-              this.nextTask();
-            } else {
-              this.$message.error(res.data.message);
-            }
-          },
-          err => {
-            this.$message.error("勾画状态设置失败");
+      this.$axios.get("/cmscp/datamanage/fileRecord/sketched", { params }).then(
+        res => {
+          if (res.data.status === 0) {
+            this.$message("勾画状态设置成功");
+            this.nextTask();
+          } else {
+            this.$message.error(res.data.message);
           }
-        );
+        },
+        err => {
+          this.$message.error("勾画状态设置失败");
+        }
+      );
     },
     // 审核状态设置
     setAuditState(audit) {
@@ -269,21 +267,19 @@ export default {
         fileRecordId: this.currentFileRecord.id,
         audit: audit
       };
-      this.$axios
-        .get("/jspxcms/cmscp/datamanage/fileRecord/audited", { params })
-        .then(
-          res => {
-            if (res.data.status === 0) {
-              this.$message("审核状态设置成功");
-              this.nextTask();
-            } else {
-              this.$message.error(res.data.message);
-            }
-          },
-          err => {
-            this.$message.error("审核状态设置失败");
+      this.$axios.get("/cmscp/datamanage/fileRecord/audited", { params }).then(
+        res => {
+          if (res.data.status === 0) {
+            this.$message("审核状态设置成功");
+            this.nextTask();
+          } else {
+            this.$message.error(res.data.message);
           }
-        );
+        },
+        err => {
+          this.$message.error("审核状态设置失败");
+        }
+      );
     },
     // 我的任务下一条
     nextTask() {
@@ -292,7 +288,7 @@ export default {
       };
       this.$axios
         .post(
-          `/jspxcms/cmscp/datamanage/myTask/next?operate=${formVal.operate}`,
+          `//cmscp/datamanage/myTask/next?operate=${formVal.operate}`,
           formVal
         )
         .then(
