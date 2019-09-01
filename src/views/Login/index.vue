@@ -11,13 +11,17 @@
         class="demo-ruleForm"
       >
         <el-form-item label="账号" prop="username">
-          <el-input v-model="ruleForm.username"></el-input>
+          <el-input
+            v-model="ruleForm.username"
+            @keyup.enter.native="onSubmit"
+          ></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input
             type="password"
             v-model="ruleForm.password"
             autocomplete="off"
+            @keyup.enter.native="onSubmit"
           ></el-input>
         </el-form-item>
         <el-form-item>

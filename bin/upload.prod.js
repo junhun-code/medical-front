@@ -12,9 +12,7 @@ client.scp(
   },
   function(err) {
     if (!err) {
-      console.log(
-        "scp2工具上传完毕,prod远端服务路径：/Medical/front/"
-      );
+      console.log("scp2工具上传完毕,prod远端服务路径：/Medical/front/");
     } else {
       console.log("err", err);
     }
