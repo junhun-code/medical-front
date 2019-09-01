@@ -288,7 +288,7 @@ export default {
       };
       this.$axios
         .post(
-          `//cmscp/datamanage/myTask/next?operate=${formVal.operate}`,
+          `/cmscp/datamanage/myTask/next?operate=${formVal.operate}`,
           formVal
         )
         .then(
