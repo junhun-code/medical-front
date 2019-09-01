@@ -199,7 +199,7 @@ export default {
     // 影像下载
     fileRecordDownload() {
       if (!this.currentFileRecord || !this.currentFileRecord.id) return;
-      this.imageUrl = `//cmscp/datamanage/fileRecord/download?fileRecordId=${
+      this.imageUrl = `/cmscp/datamanage/fileRecord/download?fileRecordId=${
         this.currentFileRecord.id
       }&uuid=${this.currentFileRecord.fileUuid}`;
     },
