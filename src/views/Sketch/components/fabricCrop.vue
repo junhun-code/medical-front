@@ -1,5 +1,5 @@
 <template>
-  <div class="fabric-crop">
+  <div class="fabric-crop" v-loading="loading">
     <canvas :id="canvasId" width="130" height="130">
       你的浏览器不支持canvas
     </canvas>
@@ -29,6 +29,7 @@ export default {
       canvas: null,
       imageWidth: 0,
       imageHight: 0,
+      loading: false,
 
       sketchTargetIdArr: []
     };
@@ -138,6 +139,7 @@ export default {
     },
     // 勾画保存
     sketchSave(id) {
+      this.loading = true;
       let newArr = [];
       if (!this.sketchTargetIdArr.includes(id)) {
         newArr = [...this.sketchTargetIdArr, id];
@@ -153,15 +155,17 @@ export default {
       this.$axios.post("/jspxcms/cmscp/datamanage/sketch/save", formVal).then(
         res => {
           this.sketchTargetVisible = false;
+          this.loading = false;
           if (res.data.status === 0) {
-            this.$message("勾画保存成功");
+            this.$message("勾画打标签成功");
             this.sketchTargetIdArr = newArr;
           } else {
-            this.$message.error("勾画保存失败");
+            this.$message.error("勾画打标签失败");
           }
         },
         err => {
-          this.$message.error("勾画保存失败");
+          this.loading = false;
+          this.$message.error("勾画打标签失败");
         }
       );
     }

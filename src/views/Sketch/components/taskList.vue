@@ -7,12 +7,15 @@
     <div class="data-list">
       <div
         class="task-item"
-        :class="{ 'task-selected': currentFileRecord.id === item.id }"
+        :class="{
+          'task-selected':
+            currentFileRecord && item && currentFileRecord.id === item.id
+        }"
         v-for="(item, index) in taskList"
         :key="index"
         @click="selectCurrentFileRecord(item)"
       >
-        {{ item.fileName }}
+        {{ item ? item.fileName : "" }}
       </div>
     </div>
     <div class="task-pagination">

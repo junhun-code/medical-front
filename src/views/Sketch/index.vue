@@ -136,11 +136,13 @@ export default {
       this.mode = mode;
     },
     updateCurrentFileRecord(item) {
+      if (!item || !item.id) return;
       this.currentFileRecord = item;
       this.getFileRecord();
     },
     // 图片详情
     getFileRecord() {
+      if (!this.currentFileRecord || !this.currentFileRecord.id) return;
       let params = {
         fileRecordId: this.currentFileRecord.id
       };
@@ -196,6 +198,7 @@ export default {
     },
     // 影像下载
     fileRecordDownload() {
+      if (!this.currentFileRecord || !this.currentFileRecord.id) return;
       this.imageUrl = `/jspxcms/cmscp/datamanage/fileRecord/download?fileRecordId=${
         this.currentFileRecord.id
       }&uuid=${this.currentFileRecord.fileUuid}`;
@@ -236,7 +239,9 @@ export default {
       this.latestSketchGroups = list;
     },
     // 下一条处理
-    goToNextPagination() {},
+    goToNextPagination() {
+      this.nextTask();
+    },
     // 勾画状态设置
     setSketchState() {
       let params = {
@@ -285,18 +290,25 @@ export default {
       let formVal = {
         operate: this.mode === "sketch" ? 1 : 2
       };
-      this.$axios.post("/jspxcms/cmscp/datamanage/myTask/next", formVal).then(
-        res => {
-          if (res.data.status === 0) {
-            console.log("下一张");
-          } else {
-            this.$message.error(res.data.message);
+      this.$axios
+        .post(
+          `/jspxcms/cmscp/datamanage/myTask/next?operate=${formVal.operate}`,
+          formVal
+        )
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              console.log("下一张");
+              this.updateCurrentFileRecord(res.data.data);
+              this.$message("跳转下一页");
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("跳转下一页失败");
           }
-        },
-        err => {
-          this.$message.error("跳转下一页失败");
-        }
-      );
+        );
     }
   },
   mounted() {
