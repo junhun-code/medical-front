@@ -42,7 +42,9 @@
     <div class="fabric-wrap">
       <task-list
         class="tab-list-wrap"
+        ref="taskList"
         :mode="mode"
+        :currentFileRecord="currentFileRecord"
         @updateMode="updateMode"
         @updateCurrentFileRecord="updateCurrentFileRecord"
       ></task-list>
@@ -300,6 +302,7 @@ export default {
             if (res.data.status === 0) {
               console.log("下一张");
               this.updateCurrentFileRecord(res.data.data);
+              this.$refs.taskList.getMyTask();
               this.$message("跳转下一页");
             } else {
               this.$message.error(res.data.message);

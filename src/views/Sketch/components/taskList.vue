@@ -33,7 +33,7 @@
 <script>
 export default {
   name: "task-list",
-  props: [],
+  props: ["currentFileRecord"],
   data() {
     return {
       mode: "sketch",
@@ -42,11 +42,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      taskList: [],
-      currentFileRecord: {
-        id: "",
-        fileUuid: ""
-      }
+      taskList: []
     };
   },
   components: {},
@@ -93,7 +89,6 @@ export default {
       );
     },
     selectCurrentFileRecord(item) {
-      this.currentFileRecord = item;
       this.$emit("updateCurrentFileRecord", item);
     }
   },
