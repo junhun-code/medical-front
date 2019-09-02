@@ -10,7 +10,7 @@ module.exports = {
   publicPath: process.env.BASE_URL,
   devServer: {
     port: 8080,
-    host: "0.0.0.0",
+    host: "dev.nlifec.com",
     disableHostCheck: true,
     proxy: {
       "/msci": {
