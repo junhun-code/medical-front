@@ -25,7 +25,11 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit" class="login-form-button"
+          <el-button
+            type="primary"
+            :loading="loading"
+            @click="onSubmit"
+            class="login-form-button"
             >登录</el-button
           >
         </el-form-item>
@@ -38,6 +42,7 @@
 export default {
   data() {
     return {
+      loading: false,
       ruleForm: {
         username: "",
         password: ""
@@ -52,11 +57,13 @@ export default {
     onSubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
+          this.loading = true;
           let formData = new FormData();
           formData.append("username", this.ruleForm.username);
           formData.append("password", this.ruleForm.password);
           this.$axios.post("/msci/site-1/datamanage/login", formData).then(
             res => {
+              this.loading = false;
               if (res.data.status === 0) {
                 this.$message.success("登录成功");
                 this.$tools.sleep(300).then(() => {
@@ -67,6 +74,7 @@ export default {
               }
             },
             err => {
+              this.loading = false;
               this.$message.error("登录失败");
             }
           );
