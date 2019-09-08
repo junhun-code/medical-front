@@ -5,8 +5,10 @@
       :data="recordList"
       :height="tableHeight"
       v-loading="loading"
-      border
+      fit
       stripe
+      border
+      resizable
       tooltip-effect="dark"
       style="width: 100%"
       :row-class-name="tableRowClassName"
