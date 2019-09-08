@@ -77,13 +77,6 @@
         :sketch-target-list="sketchTargetList"
       ></fabric-crop>
     </div>
-    <div class="pagination-control">
-      <el-button-group>
-        <el-button type="primary" @click="goToNextPagination"
-          >下一页<i class="el-icon-arrow-right el-icon--right"></i
-        ></el-button>
-      </el-button-group>
-    </div>
   </div>
 </template>
 
@@ -348,10 +341,6 @@ export default {
   .crop-wrap {
     padding: 10px 20px;
     display: flex;
-  }
-  .pagination-control {
-    display: flex;
-    justify-content: center;
   }
 }
 </style>

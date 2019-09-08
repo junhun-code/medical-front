@@ -4,6 +4,7 @@
       ref="multipleTable"
       :data="recordList"
       :height="tableHeight"
+      v-loading="loading"
       border
       stripe
       tooltip-effect="dark"
@@ -78,7 +79,7 @@
 import dayjs from "dayjs";
 export default {
   name: "record-table",
-  props: ["recordList"],
+  props: ["recordList", "loading"],
   data() {
     return {
       tableHeight: 0,

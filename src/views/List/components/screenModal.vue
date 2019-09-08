@@ -101,8 +101,8 @@
           >清除状态</el-button
         >
       </el-form-item>
-      <!-- 数据格式 -->
-      <el-form-item label="分配状态">
+      <!-- 图像格式 -->
+      <el-form-item label="图像格式">
         <el-radio-group v-model="form.fileType">
           <el-radio
             v-for="(item, index) in fileTypeList"

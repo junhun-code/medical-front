@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="list-table">
-      <record-table :record-list="recordList" />
+      <record-table :record-list="recordList" :loading="loading" />
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -59,7 +59,8 @@ export default {
       recordList: [],
       currentPage: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      loading: false
     };
   },
   components: {
@@ -92,9 +93,9 @@ export default {
         screenData["auditorTimeEnd"] = value.auditorTime[1];
       }
       // 数据状态
-      screenData["trained"] = 0;
-      screenData["audited"] = 0;
-      screenData["sketched"] = 0;
+      screenData["trained"] = undefined;
+      screenData["audited"] = undefined;
+      screenData["sketched"] = undefined;
       if (value.status === "已训练") {
         screenData["trained"] = 1;
       } else if (value.status === "已驳回") {
@@ -104,9 +105,9 @@ export default {
       } else if (value.status === "已标注") {
         screenData["sketched"] = 1;
       } else if (value.status === "未标注") {
-        screenData["sketched"] = 0;
+        screenData["sketched"] = undefined;
       }
-      screenData["alloted"] = 0;
+      screenData["alloted"] = undefined;
       if (value.allotedStatus === "分配勾画审核") {
         screenData["alloted"] = 11;
       } else if (value.allotedStatus === "分配审核") {
@@ -114,7 +115,7 @@ export default {
       } else if (value.allotedStatus === "分配勾画") {
         screenData["alloted"] = 10;
       } else if (value.allotedStatus === "未分配") {
-        screenData["alloted"] = 0;
+        screenData["alloted"] = undefined;
       }
       // 数据格式
       screenData["fileType"] = value.fileType || undefined;
@@ -128,6 +129,7 @@ export default {
         current: this.currentPage,
         size: this.pageSize
       };
+      this.loading = true;
       this.$axios
         .post(
           "/msci/cmscp/datamanage/fileRecord/list",
@@ -135,6 +137,7 @@ export default {
         )
         .then(
           res => {
+            this.loading = false;
             if (res.data.status === 0) {
               let recordList = res.data.data.content;
               recordList.forEach(item => {
@@ -197,6 +200,7 @@ export default {
             }
           },
           err => {
+            this.loading = false;
             console.log(err);
           }
         );
