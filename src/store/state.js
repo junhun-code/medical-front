@@ -1,7 +1,11 @@
 "use strict";
 
 const state = {
-  userInfo: null,
+  userInfo: {
+    id: null,
+    realName: "",
+    username: ""
+  },
   listPerms: {
     children: []
   },

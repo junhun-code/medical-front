@@ -1,8 +1,11 @@
 <template>
   <div class="list-container">
     <div class="head-info">
-      <tool-bar @updateScreenData="updateScreenData"></tool-bar>
-      <div class="progress-wrap">
+      <div class="head-info-left">
+        <tool-bar @updateScreenData="updateScreenData"></tool-bar>
+        <div class="user-info">登入人员：{{ userInfo.realName }}</div>
+      </div>
+      <div class="head-info-right">
         <span>任务共1000例，完成进度</span>
         <div class="progress">
           <el-progress :percentage="80"></el-progress>
@@ -34,6 +37,7 @@
 <script>
 import toolBar from "./components/toolBar";
 import recordTable from "./components/recordTable";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -62,6 +66,9 @@ export default {
       total: 0,
       loading: false
     };
+  },
+  computed: {
+    ...mapState(["userInfo"])
   },
   components: {
     toolBar,
@@ -237,7 +244,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    .progress-wrap {
+    .head-info-left {
+      display: flex;
+      align-items: center;
+      .user-info {
+        margin-left: 15px;
+      }
+    }
+    .head-info-right {
       display: flex;
       align-items: center;
       span {
