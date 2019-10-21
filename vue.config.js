@@ -14,7 +14,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/msci": {
-        target: "http://60.191.84.4:8088/",
+        target: "http://l2736397e3.wicp.vip:13935/",
         pathRewrite: { "^/msci": "" },
         changeOrigin: true,
         ws: false, //值为false防止控制台报错
