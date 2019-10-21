@@ -1,10 +1,10 @@
 "use strict";
 
 const login = {
-  path: "/",
+  path: "/login",
   name: "login",
   meta: { title: "登录" },
-  component: () => import("@/views/Login")
+  component: () => import("@/views/Login.vue")
 };
 
 const list = {
@@ -28,4 +28,16 @@ const version = {
   component: () => import("@/views/Version")
 };
 
-export const routes = [login, list, sketch, version];
+export const routes = [
+  {
+    path: "/",
+    component: () => import("../views/Index.vue"),
+    redirect: "/list",
+    children: [list, sketch, version]
+  },
+  {
+    path: "/login",
+    meta: { title: "登录" },
+    component: () => import("../views/Login.vue")
+  }
+];

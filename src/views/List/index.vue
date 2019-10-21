@@ -238,7 +238,7 @@ export default {
 <style lang="less" scoped>
 .list-container {
   .head-info {
-    padding: 10px 50px;
+    padding: 10px 0;
     height: 35px;
     display: flex;
     align-items: center;
@@ -262,7 +262,7 @@ export default {
     }
   }
   .list-table {
-    padding: 10px 50px;
+    padding: 10px 0px;
     .el-pagination {
       float: right;
       margin: 5px 0;
