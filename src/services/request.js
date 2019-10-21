@@ -28,7 +28,7 @@ axios.interceptors.response.use(
           title: "错误：401",
           message: "未登录"
         });
-        router.push("/");
+        router.push("/login");
       }
       return Promise.resolve(response);
     } else {

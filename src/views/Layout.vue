@@ -105,6 +105,7 @@ export default {
     .header-left {
       display: flex;
       align-items: center;
+      cursor: pointer;
     }
     .header-right {
       display: flex;

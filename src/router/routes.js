@@ -31,7 +31,7 @@ const version = {
 export const routes = [
   {
     path: "/",
-    component: () => import("../views/Index.vue"),
+    component: () => import("../views/Layout.vue"),
     redirect: "/list",
     children: [list, sketch, version]
   },
