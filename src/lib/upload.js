@@ -5,6 +5,7 @@ function getFileType(path) {
     const fileType = path.substr(path.lastIndexOf(".") + 1);
     if (
       fileType === "jpg" ||
+      fileType === "JPG" ||
       fileType === "gif" ||
       fileType === "png" ||
       fileType === "jpeg"

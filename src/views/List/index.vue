@@ -201,7 +201,6 @@ export default {
                   item.mediaId = filePathArr[3];
                 }
               });
-              console.log("[recordList]", recordList);
               this.recordList = recordList;
               this.total = res.data.data.totalElements;
             }
