@@ -101,27 +101,28 @@ export default {
       console.log(2, file);
       this.file = file.raw;
     },
-    uploadFile() {
+    uploadFile(param) {
+      console.log(123, param);
       // 创建表单对象
-      let form = new FormData();
+      let formVal = new FormData();
       // 后端接受参数 ，可以接受多个参数
-      form.append("file", this.file);
-      form.append(" ", " ");
-      let formVal = {
-        file: form
-      };
-      this.$axios.post("/msci/cmscp/datamanage/ai/out", formVal).then(
-        res => {
-          if (res.data.status === 0) {
-            this.$message("上传成功");
-          } else {
-            this.$message.error(res.data.message);
+      formVal.append("file", param.file);
+      this.$axios
+        .post("/msci/cmscp/datamanage/ai/out", formVal, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(
+          res => {
+            if (res.data.status === 0) {
+              this.$message("上传成功");
+            } else {
+              this.$message.error(res.data.message);
+            }
+          },
+          err => {
+            this.$message.error("上传失败");
           }
-        },
-        err => {
-          this.$message.error("上传失败");
-        }
-      );
+        );
     }
   },
   mounted() {}
@@ -130,6 +131,7 @@ export default {
 
 <style lang="less" scoped>
 .version-manager {
+  padding: 20px;
   .condition-detail {
     height: 60px;
     display: flex;

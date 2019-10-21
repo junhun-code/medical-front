@@ -126,13 +126,13 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.tableHeight =
-        window.innerHeight - this.$refs.multipleTable.$el.offsetTop - 45 - 64; // 45表示你想要调整的表格距离底部的高度（你可以自己随意调整），因为我们一般都有放分页组件的，所以需要给它留一个高度
+        window.innerHeight - this.$refs.multipleTable.$el.offsetTop - 45 - 84; // 45表示你想要调整的表格距离底部的高度（你可以自己随意调整），因为我们一般都有放分页组件的，所以需要给它留一个高度
 
       // 监听窗口大小变化
       // 表格距离浏览器的高度
       window.onresize = () => {
         this.tableHeight =
-          window.innerHeight - this.$refs.multipleTable.$el.offsetTop - 45 - 64;
+          window.innerHeight - this.$refs.multipleTable.$el.offsetTop - 45 - 84;
       };
     });
     //thi

@@ -135,9 +135,13 @@ export default {
       display: flex;
       flex: 1;
       flex-direction: column;
-      padding: 0 20px;
+      padding: 20px;
       background-color: #f4f5f6;
       box-sizing: border-box;
+      & > div {
+        box-sizing: border-box;
+        background-color: #ffffff;
+      }
     }
   }
 }

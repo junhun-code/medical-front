@@ -237,8 +237,8 @@ export default {
 
 <style lang="less" scoped>
 .list-container {
+  padding: 20px 20px 0;
   .head-info {
-    padding: 10px 0;
     height: 35px;
     display: flex;
     align-items: center;

@@ -317,7 +317,7 @@ export default {
 <style lang="less" scoped>
 .sketch-container {
   .head-info {
-    padding: 10px 20px;
+    padding: 20px;
     height: 35px;
     display: flex;
     align-items: center;
