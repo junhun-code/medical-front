@@ -23,8 +23,8 @@
         <el-upload
           action=""
           :before-upload="beforeUpload"
-          :on-change="handleChange"
           :http-request="uploadFile"
+          list-type="picture"
         >
           <el-button slot="trigger" size="small" type="primary"
             >导入测试数据</el-button
@@ -41,6 +41,7 @@ import uploadMethods from "@/lib/upload.js";
 export default {
   data() {
     return {
+      fileList: [],
       versionList: [],
       options: [
         {
@@ -88,7 +89,6 @@ export default {
   components: {},
   methods: {
     beforeUpload(file) {
-      console.log(1, file);
       if (uploadMethods.getFileType(file.name) === "image") {
         return true;
       } else {
@@ -96,13 +96,7 @@ export default {
         return false;
       }
     },
-    // 上传文件，获取文件流
-    handleChange(file) {
-      console.log(2, file);
-      this.file = file.raw;
-    },
     uploadFile(param) {
-      console.log(123, param);
       // 创建表单对象
       let formVal = new FormData();
       // 后端接受参数 ，可以接受多个参数
@@ -142,11 +136,15 @@ export default {
     }
   }
   .version-detail {
+    display: flex;
     .input-picture {
+      flex: 1;
     }
     .output-picture {
+      flex: 1;
     }
     .version-retport {
+      width: 200px;
       .version-info {
       }
       .ai-info {

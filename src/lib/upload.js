@@ -6,9 +6,12 @@ function getFileType(path) {
     if (
       fileType === "jpg" ||
       fileType === "JPG" ||
-      fileType === "gif" ||
+      fileType === "bmp" ||
+      fileType === "BMP" ||
       fileType === "png" ||
-      fileType === "jpeg"
+      fileType === "PNG" ||
+      fileType === "jpeg" ||
+      fileType === "JPEG"
     ) {
       return "image";
     } else if (fileType === "mp3") {
