@@ -2,12 +2,12 @@
   <div class="version-manager">
     <div class="condition-detail">
       <div class="picture-list-wrap">
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="value" placeholder="请选择" @change="change">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in fileList"
+            :key="item.uid"
+            :label="item.name"
+            :value="item"
           />
         </el-select>
       </div>
@@ -22,6 +22,7 @@
         <div class="report-info"></div>
         <el-upload
           action=""
+          :multiple="true"
           :before-upload="beforeUpload"
           :http-request="uploadFile"
           list-type="picture"
@@ -43,28 +44,6 @@ export default {
     return {
       fileList: [],
       versionList: [],
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
       value: ""
     };
   },
@@ -88,7 +67,11 @@ export default {
   },
   components: {},
   methods: {
+    change(value) {
+      console.log(value);
+    },
     beforeUpload(file) {
+      console.log(">>>", file);
       if (uploadMethods.getFileType(file.name) === "image") {
         return true;
       } else {
@@ -109,6 +92,9 @@ export default {
           res => {
             if (res.data.status === 0) {
               this.$message("上传成功");
+              this.fileList.push(
+                Object.assign(param.file, { report: res.data.data })
+              );
             } else {
               this.$message.error(res.data.message);
             }
