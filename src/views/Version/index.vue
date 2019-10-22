@@ -28,6 +28,7 @@
         <fabric-show
           v-if="currentFile.url"
           :image-url="currentFile.url"
+          :report="currentFile.report"
         ></fabric-show>
       </div>
       <div class="version-retport">
@@ -96,11 +97,21 @@ export default {
     handleFileSuccess(res, file) {
       if (res.status === 0) {
         this.$message.success("上传文件成功");
+        let report = res.data;
+        report.forEach(groupItem => {
+          groupItem.mask = groupItem.mask.map(maskItem => {
+            return {
+              x: maskItem.positionX,
+              y: maskItem.positionY
+            };
+          });
+        });
+
         this.fileList.push({
           uid: file.uid,
           name: file.name,
           url: file.url,
-          report: res.data
+          report: report
         });
       } else {
         this.$message.error(`上传文件失败:${res.message}`);

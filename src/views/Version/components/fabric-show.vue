@@ -1,18 +1,8 @@
 <template>
   <div class="fabric-show">
-    <canvas :id="canvasId" width="130" height="130">
+    <canvas :id="canvasId" width="500" height="400">
       你的浏览器不支持canvas
     </canvas>
-    <!-- mask标签 -->
-    <div class="sketch-target">
-      <div
-        class="sketch-target-item"
-        v-for="(item, index) in sketchTargetList"
-        :key="index"
-      >
-        {{ item.name }}
-      </div>
-    </div>
   </div>
 </template>
 
@@ -21,23 +11,21 @@ import { fabric } from "fabric";
 
 export default {
   name: "fabric-show",
-  props: ["imageUrl", "sketchDetail", "sketchTargetList"],
+  props: ["imageUrl", "report"],
   data() {
     return {
       canvas: null,
       imageWidth: 0,
-      imageHight: 0,
-
-      sketchTargetIdArr: []
+      imageHight: 0
     };
   },
   computed: {
     canvasId() {
-      return `canvas-show${this.sketchDetail.id}`;
+      return `canvas-show`;
     }
   },
   watch: {
-    sketchDetail: {
+    imageUrl: {
       handler(newVal, oldVal) {
         this.updateCanvas();
       }
@@ -66,63 +54,39 @@ export default {
         this.imageHight = oImg.height;
         oImg.selectable = false; // 在单个元素上设置 selectable为false，这样设置的单个元素是无法选择和拖动了。
         this.canvas.add(oImg);
-        this.initSketchTargetArr();
         this.initPolygon();
         this.zoomToFitCanvas();
       });
     },
-    initSketchTargetArr() {
-      if (this.sketchDetail && this.sketchDetail.targetId) {
-        this.sketchTargetIdArr = this.sketchDetail.targetId
-          .split(",")
-          .map(item => Number(item));
-      } else {
-        this.sketchTargetIdArr = [];
-      }
-    },
     initPolygon() {
-      let groupItem = this.sketchDetail;
-      let polygon = new fabric.Polygon(groupItem.sketchList, {
-        strokeWidth: 2,
-        stroke: "red",
-        objectCaching: false,
-        fill: "transparent"
+      this.report.forEach(groupItem => {
+        let polygon = new fabric.Polygon(groupItem.mask, {
+          strokeWidth: 2,
+          stroke: "red",
+          objectCaching: false,
+          fill: "transparent"
+        });
+        this.canvas.add(polygon);
       });
-      polygon.fileRecordId = groupItem.fileRecordId;
-      polygon.sketchGroupId = groupItem.id;
-      polygon.siteId = groupItem.siteId;
-      polygon.targetId = groupItem.targetId;
-      polygon.targetName = groupItem.targetName;
-      this.canvas.add(polygon);
     },
+    // 内容自动缩放并居中 http://www.hangge.com/blog/cache/detail_1861.html
     zoomToFitCanvas() {
       //先还原缩放比例与位置
       this.canvas.setZoom(1);
       this.canvas.absolutePan({ x: 0, y: 0 });
 
-      //遍历所有对对象，获取最小坐标，最大坐标
-      var minX = this.imageWidth;
-      var minY = this.imageHight;
-      var maxX = 0;
-      var maxY = 0;
-      this.sketchDetail.sketchList.forEach(item => {
-        minX = Math.min(minX, item.x);
-        minY = Math.min(minY, item.y);
-        maxX = Math.max(maxX, item.x);
-        maxY = Math.max(maxY, item.y);
-      });
-
       //计算平移坐标
-      var panX = (maxX - minX - this.canvas.width) / 2 + minX;
-      var panY = (maxY - minY - this.canvas.height) / 2 + minY;
+      let panX = (this.imageWidth - this.canvas.width) / 2;
+      let panY = (this.imageHight - this.canvas.height) / 2;
       //开始平移
       this.canvas.absolutePan({ x: panX, y: panY });
 
       //计算缩放比例
       var zoom = Math.min(
-        this.canvas.width / (maxX - minX),
-        this.canvas.height / (maxY - minY)
+        this.canvas.width / this.imageWidth,
+        this.canvas.height / this.imageHight
       );
+
       //计算缩放中心
       var zoomPoint = new fabric.Point(
         this.canvas.width / 2,
@@ -144,24 +108,5 @@ export default {
   margin: 0 5px;
   height: 130px;
   display: flex;
-  .sketch-target {
-    display: flex;
-    flex-direction: column;
-    .sketch-target-item {
-      border: 1px solid #0088f0;
-      color: #0088f0;
-      border-radius: 0;
-      padding: 1px 3px;
-      font-size: 12px;
-      cursor: pointer;
-      &:hover {
-        background-color: #ecf5ff;
-      }
-      &.active-target {
-        background-color: #0088f0;
-        color: #ffffff;
-      }
-    }
-  }
 }
 </style>
