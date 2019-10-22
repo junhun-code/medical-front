@@ -2,7 +2,7 @@
   <div class="version-manager">
     <div class="condition-detail">
       <div class="picture-list-wrap">
-        <el-select v-model="value" placeholder="请选择" @change="change">
+        <el-select v-model="currentFile" placeholder="请选择">
           <el-option
             v-for="item in fileList"
             :key="item.uid"
@@ -14,17 +14,32 @@
       <div class="version-list-wrap"></div>
     </div>
     <div class="version-detail">
-      <div class="input-picture"></div>
-      <div class="output-picture"></div>
+      <div class="input-picture">
+        <el-image
+          v-if="currentFile.url"
+          class="image-wrap"
+          style="width: 100%"
+          :src="currentFile.url"
+          :preview-src-list="[currentFile.url]"
+          fit="contain"
+        ></el-image>
+      </div>
+      <div class="output-picture">
+        <fabric-show
+          v-if="currentFile.url"
+          :image-url="currentFile.url"
+        ></fabric-show>
+      </div>
       <div class="version-retport">
         <div class="version-info"></div>
         <div class="ai-info"></div>
         <div class="report-info"></div>
         <el-upload
-          action=""
+          action="/msci/cmscp/datamanage/ai/out"
           :multiple="true"
           :before-upload="beforeUpload"
-          :http-request="uploadFile"
+          :on-success="handleFileSuccess"
+          :on-error="handleFileError"
           list-type="picture"
         >
           <el-button slot="trigger" size="small" type="primary"
@@ -37,14 +52,15 @@
 </template>
 
 <script>
+import fabricShow from "./components/fabric-show";
 import { mapState } from "vuex";
 import uploadMethods from "@/lib/upload.js";
 export default {
   data() {
     return {
+      currentFile: "",
       fileList: [],
-      versionList: [],
-      value: ""
+      versionList: []
     };
   },
   computed: {
@@ -65,13 +81,11 @@ export default {
       );
     }
   },
-  components: {},
+  components: {
+    fabricShow
+  },
   methods: {
-    change(value) {
-      console.log(value);
-    },
     beforeUpload(file) {
-      console.log(">>>", file);
       if (uploadMethods.getFileType(file.name) === "image") {
         return true;
       } else {
@@ -79,30 +93,21 @@ export default {
         return false;
       }
     },
-    uploadFile(param) {
-      // 创建表单对象
-      let formVal = new FormData();
-      // 后端接受参数 ，可以接受多个参数
-      formVal.append("file", param.file);
-      this.$axios
-        .post("/msci/cmscp/datamanage/ai/out", formVal, {
-          headers: { "Content-Type": "multipart/form-data" }
-        })
-        .then(
-          res => {
-            if (res.data.status === 0) {
-              this.$message("上传成功");
-              this.fileList.push(
-                Object.assign(param.file, { report: res.data.data })
-              );
-            } else {
-              this.$message.error(res.data.message);
-            }
-          },
-          err => {
-            this.$message.error("上传失败");
-          }
-        );
+    handleFileSuccess(res, file) {
+      if (res.status === 0) {
+        this.$message.success("上传文件成功");
+        this.fileList.push({
+          uid: file.uid,
+          name: file.name,
+          url: file.url,
+          report: res.data
+        });
+      } else {
+        this.$message.error(`上传文件失败:${res.message}`);
+      }
+    },
+    handleFileError(err, file, fileList) {
+      this.$message.error("上传文件失败");
     }
   },
   mounted() {}
@@ -125,6 +130,7 @@ export default {
     display: flex;
     .input-picture {
       flex: 1;
+      margin-right: 15px;
     }
     .output-picture {
       flex: 1;
