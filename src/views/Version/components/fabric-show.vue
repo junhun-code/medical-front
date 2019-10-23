@@ -1,6 +1,6 @@
 <template>
-  <div class="fabric-show">
-    <canvas :id="canvasId" width="500" height="400">
+  <div class="fabric-show" ref="canvas-wrapper">
+    <canvas ref="canvas" id="canvas-show">
       你的浏览器不支持canvas
     </canvas>
   </div>
@@ -16,18 +16,20 @@ export default {
     return {
       canvas: null,
       imageWidth: 0,
-      imageHight: 0
+      imageHight: 0,
+      isDragging: false // 是否正在拖动
     };
   },
-  computed: {
-    canvasId() {
-      return `canvas-show`;
-    }
-  },
+  computed: {},
   watch: {
     imageUrl: {
-      handler(newVal, oldVal) {
-        this.updateCanvas();
+      handler: function(newVal, oldVal) {
+        if (this.canvas) {
+          this.canvas.clear();
+          this.updateCanvas();
+        } else {
+          this.initCanvas();
+        }
       }
     }
   },
@@ -37,8 +39,12 @@ export default {
       this.initImage();
     },
     initCanvas() {
-      //初始化画板
-      this.canvas = new fabric.Canvas(this.canvasId, {
+      const CANCAS_WIDTH = this.$refs["canvas-wrapper"].offsetWidth;
+      const CANCAS_HEIGHT = this.$refs["canvas-wrapper"].offsetHeight;
+      this.$refs.canvas.width = CANCAS_WIDTH;
+      this.$refs.canvas.height = CANCAS_HEIGHT;
+
+      this.canvas = new fabric.Canvas("canvas-show", {
         isDrawingMode: false,
         skipTargetFind: true, // 画板元素不能被选中
         selectable: false,
@@ -46,7 +52,10 @@ export default {
         preserveObjectStacking: true,
         fireRightClick: true
       });
+
       this.initImage();
+      this.zoomControl();
+      this.panControl();
     },
     initImage() {
       fabric.Image.fromURL(this.imageUrl, oImg => {
@@ -94,19 +103,48 @@ export default {
       );
       //开始缩放
       this.canvas.zoomToPoint(zoomPoint, zoom);
+    },
+    // 缩放
+    zoomControl() {
+      this.canvas.on("mouse:wheel", opt => {
+        var delta = opt.e.deltaY;
+        var pointer = this.canvas.getPointer(opt.e);
+        var zoom = this.canvas.getZoom();
+        zoom = zoom + delta / 500;
+        if (zoom > 10) zoom = 10;
+        if (zoom < 0.1) zoom = 0.1;
+        this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+      });
+    },
+    // 平移
+    panControl() {
+      this.canvas.on("mouse:down", opt => {
+        var evt = opt.e;
+        this.isDragging = true;
+      });
+      this.canvas.on("mouse:move", opt => {
+        if (this.isDragging) {
+          var e = opt.e;
+          var delta = new fabric.Point(e.movementX, e.movementY);
+          this.canvas.relativePan(delta);
+        }
+      });
+      this.canvas.on("mouse:up", opt => {
+        this.isDragging = false;
+      });
     }
   },
   created() {},
   mounted() {
-    this.initCanvas();
+    setTimeout(this.initCanvas, 500);
   }
 };
 </script>
 
 <style lang="less" scoped>
-.fabric-crop {
-  margin: 0 5px;
-  height: 130px;
-  display: flex;
+.fabric-show {
+  height: 100%;
 }
 </style>

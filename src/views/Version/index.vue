@@ -18,7 +18,7 @@
         <el-image
           v-if="currentFile.url"
           class="image-wrap"
-          style="width: 100%"
+          style="width: 100%; height: 100%;"
           :src="currentFile.url"
           :preview-src-list="[currentFile.url]"
           fit="contain"
@@ -127,7 +127,10 @@ export default {
 
 <style lang="less" scoped>
 .version-manager {
+  height: 100%;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
   .condition-detail {
     height: 60px;
     display: flex;
@@ -138,15 +141,21 @@ export default {
     }
   }
   .version-detail {
+    flex: 1;
     display: flex;
     .input-picture {
       flex: 1;
       margin-right: 15px;
+      border: 1px solid #dcdfe6;
+      box-sizing: border-box;
     }
     .output-picture {
       flex: 1;
+      border: 1px solid #dcdfe6;
+      box-sizing: border-box;
     }
     .version-retport {
+      margin-left: 15px;
       width: 200px;
       .version-info {
       }
