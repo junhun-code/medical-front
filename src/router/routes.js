@@ -1,10 +1,17 @@
 "use strict";
 
+const site = {
+  path: "/site/:siteId",
+  name: "site",
+  meta: { title: "站点" },
+  component: () => import("@/views/Site")
+};
+
 const login = {
   path: "/login",
   name: "login",
   meta: { title: "登录" },
-  component: () => import("@/views/Login.vue")
+  component: () => import("@/views/Login")
 };
 
 const list = {
@@ -29,15 +36,12 @@ const version = {
 };
 
 export const routes = [
+  site,
+  login,
   {
     path: "/",
     component: () => import("../views/Layout.vue"),
     redirect: "/list",
     children: [list, sketch, version]
-  },
-  {
-    path: "/login",
-    meta: { title: "登录" },
-    component: () => import("../views/Login.vue")
   }
 ];

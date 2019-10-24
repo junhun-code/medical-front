@@ -49,7 +49,8 @@ export default {
       },
       rules: {
         username: [{ required: true, message: "请输入账号", trigger: "blur" }]
-      }
+      },
+      siteId: undefined
     };
   },
   components: {},
@@ -61,23 +62,25 @@ export default {
           let formData = new FormData();
           formData.append("username", this.ruleForm.username);
           formData.append("password", this.ruleForm.password);
-          this.$axios.post("/msci/site-1/datamanage/login", formData).then(
-            res => {
-              this.loading = false;
-              if (res.data.status === 0) {
-                this.$message.success("登录成功");
-                this.$tools.sleep(300).then(() => {
-                  this.$router.replace({ path: `/list` });
-                });
-              } else {
+          this.$axios
+            .post(`/msci/site-${this.siteId}/datamanage/login`, formData)
+            .then(
+              res => {
+                this.loading = false;
+                if (res.data.status === 0) {
+                  this.$message.success("登录成功");
+                  this.$tools.sleep(300).then(() => {
+                    this.$router.replace({ path: `/list` });
+                  });
+                } else {
+                  this.$message.error("登录失败");
+                }
+              },
+              err => {
+                this.loading = false;
                 this.$message.error("登录失败");
               }
-            },
-            err => {
-              this.loading = false;
-              this.$message.error("登录失败");
-            }
-          );
+            );
         } else {
           this.$message.error("请填写账号信息");
           return false;
@@ -85,7 +88,10 @@ export default {
       });
     }
   },
-  mounted() {}
+  created() {
+    this.siteId = this.$route.query.siteId;
+    if (!this.siteId) this.$message.error("站点为空，请联系管理员");
+  }
 };
 </script>
 
