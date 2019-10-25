@@ -89,7 +89,7 @@ export default {
     }
   },
   created() {
-    this.siteId = this.$route.query.siteId;
+    this.siteId = this.$tools.getSessionStorage("siteId");
     if (!this.siteId) this.$message.error("站点为空，请联系管理员");
   }
 };

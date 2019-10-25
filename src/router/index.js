@@ -16,7 +16,7 @@ var router = new Router({
 
 router.beforeEach((to, from, next) => {
   // 数据列表、勾画权限查询
-  if (to.name !== "login") {
+  if (to.name !== "login" && to.name !== "site") {
     axios.get("/msci/cmscp/datamanage/dataManage/perms").then(
       res => {
         if (res.data.status === 0) {

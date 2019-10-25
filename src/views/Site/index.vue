@@ -12,11 +12,9 @@ export default {
   methods: {},
   created() {
     let siteId = this.$route.params.siteId;
+    this.$tools.setSessionStorage("siteId", siteId);
     this.$router.replace({
-      path: "/login",
-      query: {
-        siteId
-      }
+      path: "/list"
     });
   },
   mounted() {}
