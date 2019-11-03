@@ -1,17 +1,28 @@
 <template>
   <div class="version-manager">
     <div class="condition-detail">
-      <div class="picture-list-wrap">
-        <el-select v-model="currentFile" placeholder="请选择">
+      <div class="version-list-wrap">
+        <el-select v-model="currentVersion" placeholder="请选择">
           <el-option
-            v-for="item in fileList"
-            :key="item.uid"
+            v-for="item in versionList"
+            :key="item.value"
             :label="item.name"
-            :value="item"
+            :value="currentVersion"
           />
         </el-select>
       </div>
-      <div class="version-list-wrap"></div>
+      <div class="upload-picture-wrap">
+        <el-upload
+          action="/msci/cmscp/datamanage/ai/out"
+          :multiple="true"
+          list-type="picture"
+          :before-upload="beforeUpload"
+          :on-success="handleFileSuccess"
+          :on-error="handleFileError"
+        >
+          <el-button slot="trigger" type="primary">导入测试数据</el-button>
+        </el-upload>
+      </div>
     </div>
     <div class="version-detail">
       <div class="input-picture">
@@ -31,22 +42,20 @@
           :report="currentFile.report"
         ></fabric-show>
       </div>
-      <div class="version-retport">
-        <div class="version-info"></div>
-        <div class="ai-info"></div>
-        <div class="report-info"></div>
-        <el-upload
-          action="/msci/cmscp/datamanage/ai/out"
-          :multiple="true"
-          :before-upload="beforeUpload"
-          :on-success="handleFileSuccess"
-          :on-error="handleFileError"
-          list-type="picture"
-        >
-          <el-button slot="trigger" size="small" type="primary"
-            >导入测试数据</el-button
+      <div class="file-list-wrap">
+        <div class="file-list">
+          <div
+            class="box-card-wrap"
+            :class="{ 'active-card': currentFile.uid === item.uid }"
+            v-for="(item, index) in fileList"
+            :key="index"
+            @click="selectCurrentFile(item, index)"
           >
-        </el-upload>
+            <el-card class="box-card" shadow="hover">
+              <div class="card-content">{{ item.name }}</div>
+            </el-card>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -59,9 +68,16 @@ import uploadMethods from "@/lib/upload.js";
 export default {
   data() {
     return {
+      // 第一版写死
+      currentVersion: 0,
+      versionList: [
+        {
+          name: "超声甲状腺v1.0",
+          value: 0
+        }
+      ],
       currentFile: "",
-      fileList: [],
-      versionList: []
+      fileList: []
     };
   },
   computed: {
@@ -119,6 +135,10 @@ export default {
     },
     handleFileError(err, file, fileList) {
       this.$message.error("上传文件失败");
+    },
+    selectCurrentFile(item, index) {
+      console.log(">>>", item);
+      this.currentFile = item;
     }
   },
   mounted() {}
@@ -135,9 +155,13 @@ export default {
     height: 60px;
     display: flex;
     justify-content: flex-start;
-    .picture-list-wrap {
-    }
     .version-list-wrap {
+    }
+    .upload-picture-wrap {
+      margin-left: 10px;
+      /deep/.el-upload-list--picture {
+        display: none;
+      }
     }
   }
   .version-detail {
@@ -154,16 +178,35 @@ export default {
       border: 1px solid #dcdfe6;
       box-sizing: border-box;
     }
-    .version-retport {
+    .file-list-wrap {
+      position: relative;
       margin-left: 15px;
-      width: 200px;
-      .version-info {
-      }
-      .ai-info {
-      }
-      .result-info {
-      }
-      .button-wrap {
+      width: 300px;
+      .file-list {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: overlay;
+        .box-card-wrap {
+          &.active-card {
+            .box-card {
+              background-color: #3a8ee6;
+            }
+            .card-content {
+              color: #ffffff;
+            }
+          }
+          .box-card {
+            margin-bottom: 10px;
+            .card-content {
+              overflow: hidden; /*超出部分隐藏*/
+              text-overflow: ellipsis; /* 超出部分显示省略号 */
+              white-space: nowrap; /*规定段落中的文本不进行换行 */
+            }
+          }
+        }
       }
     }
   }

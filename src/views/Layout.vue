@@ -12,6 +12,7 @@
           v-show="isCollapse"
           @click="handlePanel()"
         ></i>
+        <div class="company">悟空算法云平台</div>
       </div>
       <div class="header-right"></div>
     </div>
@@ -106,6 +107,11 @@ export default {
       display: flex;
       align-items: center;
       cursor: pointer;
+      .company {
+        margin-left: 15px;
+        height: 26px;
+        line-height: 23px;
+      }
     }
     .header-right {
       display: flex;
