@@ -72,7 +72,7 @@ export default {
       currentVersion: 0,
       versionList: [
         {
-          name: "超声甲状腺v1.0",
+          name: "超声智能诊断算法v1.0",
           value: 0
         }
       ],
