@@ -162,11 +162,13 @@ export default {
               this.syncUploadFile();
             } else {
               this.uploadErrorNum = this.uploadErrorNum + 1;
+              this.syncUploadFile();
             }
           },
           err => {
             this.loading = false;
             this.uploadErrorNum = this.uploadErrorNum + 1;
+            this.syncUploadFile();
           }
         );
       }
