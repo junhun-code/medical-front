@@ -13,14 +13,24 @@
       </div>
       <div class="upload-picture-wrap">
         <el-upload
+          ref="upload"
           action="/msci/cmscp/datamanage/ai/out"
           :multiple="true"
+          :auto-upload="false"
           list-type="picture"
+          :file-list="unuploadfileList"
           :before-upload="beforeUpload"
-          :on-success="handleFileSuccess"
-          :on-error="handleFileError"
+          :on-change="handleFileChange"
         >
           <el-button slot="trigger" type="primary">导入测试数据</el-button>
+          <el-button
+            v-if="unuploadfileList.length"
+            style="margin-left: 10px;"
+            type="success"
+            :loading="loading"
+            @click="submitUpload"
+            >上传到服务器</el-button
+          >
         </el-upload>
       </div>
     </div>
@@ -76,6 +86,10 @@ export default {
           value: 0
         }
       ],
+      loading: false,
+      uploadErrorNum: 0,
+      unuploadfileList: [],
+
       currentFile: "",
       fileList: []
     };
@@ -102,6 +116,61 @@ export default {
     fabricShow
   },
   methods: {
+    handleFileChange(file, fileList) {
+      // 初始化
+      this.uploadErrorNum = 0;
+      this.unuploadfileList = fileList;
+    },
+    submitUpload() {
+      this.syncUploadFile();
+    },
+    syncUploadFile() {
+      if (!this.unuploadfileList.length) {
+        // 上传完毕
+        if (!this.uploadErrorNum.length) {
+          this.$message.success("上传图片成功");
+        } else {
+          this.$message.error(`${this.uploadErrorNum.length}张图片上传失败`);
+        }
+      } else {
+        let currentFile = this.unuploadfileList.pop();
+        let formData = new FormData(); //  用FormData存放上传文件
+        formData.append("file", currentFile.raw);
+
+        this.loading = true;
+        this.$axios.post("/msci/cmscp/datamanage/ai/out", formData).then(
+          res => {
+            this.loading = false;
+            if (res.data.status === 0) {
+              let report = res.data.data;
+              report.forEach(groupItem => {
+                groupItem.mask = groupItem.mask.map(maskItem => {
+                  return {
+                    x: maskItem.positionX,
+                    y: maskItem.positionY
+                  };
+                });
+              });
+
+              this.fileList.push({
+                uid: currentFile.uid,
+                name: currentFile.name,
+                url: currentFile.url,
+                report: report
+              });
+
+              this.syncUploadFile();
+            } else {
+              this.uploadErrorNum = this.uploadErrorNum + 1;
+            }
+          },
+          err => {
+            this.loading = false;
+            this.uploadErrorNum = this.uploadErrorNum + 1;
+          }
+        );
+      }
+    },
     beforeUpload(file) {
       if (uploadMethods.getFileType(file.name) === "image") {
         return true;
